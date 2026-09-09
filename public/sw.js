@@ -1,4 +1,5 @@
 self.addEventListener('push', function(event) {
+  console.log('Push получен!', event);
   const data = event.data.json();
   const title = data.title || 'Новое сообщение';
   const options = {
