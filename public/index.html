@@ -248,48 +248,52 @@
       return outputArray;
     }
 
-    async function registerPush() {
-      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-        console.log('Push не поддерживается');
+async function registerPush() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    console.log('Push не поддерживается');
+    return;
+  }
+  try {
+    const registration = await navigator.serviceWorker.register('/sw.js');
+    console.log('SW зарегистрирован');
+
+    let subscription = await registration.pushManager.getSubscription();
+    
+    // Если подписки нет – создаём
+    if (!subscription) {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        console.log('Разрешение не получено');
         return;
       }
-      try {
-        const registration = await navigator.serviceWorker.register('/sw.js');
-        console.log('SW зарегистрирован');
-
-        let subscription = await registration.pushManager.getSubscription();
-        if (subscription) {
-          console.log('Уже подписаны');
-          return;
-        }
-
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-          console.log('Разрешение не получено');
-          return;
-        }
-
-        const vapidPublicKey = 'BLSHgZ5nLkLAjUk3vrfjhD2j9wWNOFo0ALizwX6lgIU6TVoKJQaBIBIiYwIP3jAPo6FIN5ZdsVRzoGLuV2dPvAc';
-        subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
-        });
-
-        const response = await fetch('/api/push/subscribe', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(subscription)
-        });
-        if (response.ok) {
-          console.log('Подписка сохранена');
-        }
-      } catch (err) {
-        console.error('Ошибка push:', err);
-      }
+      const vapidPublicKey = 'BLSHgZ5nLkLAjUk3vrfjhD2j9wWNOFo0ALizwX6lgIU6TVoKJQaBIBIiYwIP3jAPo6FIN5ZdsVRzoGLuV2dPvAc';
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+      });
+      console.log('Новая подписка создана');
+    } else {
+      console.log('Подписка уже существует, обновляем на сервере');
     }
+
+    // Отправляем подписку на сервер (всегда)
+    const response = await fetch('/api/push/subscribe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(subscription)
+    });
+    if (response.ok) {
+      console.log('Подписка сохранена на сервере');
+    } else {
+      console.error('Ошибка сохранения подписки:', await response.text());
+    }
+  } catch (err) {
+    console.error('Ошибка push:', err);
+  }
+}
 
     // ===== ИНИЦИАЛИЗАЦИЯ =====
     function initApp() {
