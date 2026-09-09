@@ -12,5 +12,6 @@
     "jsonwebtoken": "^9.0.0",
     "grammy": "^1.17.2",
     "googleapis": "^118.0.0"
+    "web-push": "^3.6.7"
   }
 }
