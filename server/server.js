@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');                // ← добавлено
 const { bot } = require('./bot');
 const { webhookCallback } = require('grammy');
+const pushRoutes = require('./routes/push');
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,7 @@ app.use('/api/rules', rulesRoutes);
 
 // Правильный путь к public
 app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use('/api/push', pushRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
