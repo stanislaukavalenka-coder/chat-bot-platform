@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');                // ← добавлено
 const { bot } = require('./bot');
 const { webhookCallback } = require('grammy');
 
@@ -8,10 +9,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Вебхук для Telegram
 app.use('/webhook', webhookCallback(bot, 'express'));
 
-// Роуты (создайте папки routes/ и middleware/)
 const authRoutes = require('./routes/auth');
 const chatsRoutes = require('./routes/chats');
 const settingsRoutes = require('./routes/settings');
@@ -22,8 +21,8 @@ app.use('/api/chats', chatsRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/rules', rulesRoutes);
 
-// Раздача статики (фронтенд)
-app.use(express.static('public'));
+// Правильный путь к public
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
