@@ -1,8 +1,338 @@
 <!DOCTYPE html>
-<html>
-<head><title>Чат-бот платформа</title></head>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Чат-бот админка</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f5; }
+    #login-screen { max-width: 400px; margin: 100px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    #login-screen input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+    #login-screen button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    #login-error { color: red; display: none; margin-top: 10px; }
+
+    #main-app { display: flex; flex-direction: column; height: 100vh; }
+    #navbar { background: #222; color: white; display: flex; justify-content: space-around; padding: 10px; }
+    #navbar button { background: none; border: none; color: white; font-size: 18px; padding: 10px; cursor: pointer; }
+    #navbar button.active { border-bottom: 3px solid #007bff; }
+
+    #content { flex: 1; padding: 20px; overflow-y: auto; }
+    section { display: none; }
+    section.active { display: block; }
+
+    #chats-list { display: grid; gap: 10px; }
+    .chat-item { background: white; padding: 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: pointer; position: relative; }
+    .chat-item .unread { background: red; color: white; border-radius: 50%; padding: 2px 8px; font-size: 12px; position: absolute; right: 10px; top: 10px; }
+
+    #dialog-view { background: white; padding: 20px; border-radius: 8px; }
+    #messages-container { max-height: 400px; overflow-y: auto; margin-bottom: 15px; }
+    .message { margin: 8px 0; padding: 8px 12px; border-radius: 10px; display: inline-block; max-width: 80%; }
+    .message.client { background: #e9ecef; text-align: left; }
+    .message.bot { background: #d4edda; }
+    .message.manager { background: #cce5ff; text-align: left; }
+
+    #reply-area { display: flex; gap: 10px; }
+    #reply-input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+    #reply-area button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+
+    #rules-table { width: 100%; border-collapse: collapse; background: white; }
+    #rules-table th, #rules-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    #rules-table .actions button { margin-right: 5px; background: #007bff; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; }
+
+    #settings-form label { display: block; margin-top: 15px; }
+    #settings-form input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+    #settings-form button { margin-top: 15px; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    #settings-message { margin-top: 10px; }
+
+    @media (min-width: 768px) {
+      #main-app { flex-direction: row; }
+      #navbar { flex-direction: column; width: 200px; height: 100vh; justify-content: flex-start; }
+      #navbar button { text-align: left; padding: 15px 20px; }
+    }
+  </style>
+</head>
 <body>
-    <h1>Админка чат-бота</h1>
-    <p>Страница загружена, но пока нет стилей.</p>
+  <div id="app">
+    <!-- Логин -->
+    <div id="login-screen">
+      <h2>Вход в админку</h2>
+      <input type="password" id="password-input" placeholder="Пароль" />
+      <button id="login-btn">Войти</button>
+      <div id="login-error">Неверный пароль</div>
+    </div>
+
+    <!-- Основное приложение -->
+    <div id="main-app" style="display:none;">
+      <nav id="navbar">
+        <button class="nav-btn active" data-section="chats">💬 Чаты</button>
+        <button class="nav-btn" data-section="rules">🤖 Сценарии</button>
+        <button class="nav-btn" data-section="settings">⚙️ Настройки</button>
+      </nav>
+
+      <div id="content">
+        <!-- Чаты -->
+        <section id="section-chats" class="active">
+          <h2>Чаты</h2>
+          <div id="chats-list"></div>
+        </section>
+
+        <!-- Диалог -->
+        <div id="dialog-view" style="display:none;">
+          <button id="back-to-chats">← Назад</button>
+          <h3 id="dialog-title">Чат с клиентом</h3>
+          <div id="messages-container"></div>
+          <div id="reply-area">
+            <input type="text" id="reply-input" placeholder="Введите ответ..." />
+            <button id="send-reply">Отправить</button>
+          </div>
+        </div>
+
+        <!-- Сценарии -->
+        <section id="section-rules">
+          <h2>Автоответы</h2>
+          <button id="add-rule-btn">+ Добавить правило</button>
+          <table id="rules-table">
+            <thead><tr><th>Ключевое слово</th><th>Ответ</th><th>Активен</th><th>Действия</th></tr></thead>
+            <tbody id="rules-body"></tbody>
+          </table>
+        </section>
+
+        <!-- Настройки -->
+        <section id="section-settings">
+          <h2>Настройки бота</h2>
+          <div id="settings-form">
+            <label>Токен бота:</label>
+            <input type="text" id="bot-token-input" placeholder="Введите токен" />
+            <button id="save-settings-btn">Сохранить</button>
+            <div id="settings-message"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
+    let token = null;
+    let currentChatId = null;
+    let unreadInterval = null;
+
+    // ===== DOM-ЭЛЕМЕНТЫ =====
+    const loginScreen = document.getElementById('login-screen');
+    const mainApp = document.getElementById('main-app');
+    const passwordInput = document.getElementById('password-input');
+    const loginBtn = document.getElementById('login-btn');
+    const loginError = document.getElementById('login-error');
+
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const sections = {
+      chats: document.getElementById('section-chats'),
+      rules: document.getElementById('section-rules'),
+      settings: document.getElementById('section-settings')
+    };
+    const dialogView = document.getElementById('dialog-view');
+    const chatsList = document.getElementById('chats-list');
+    const messagesContainer = document.getElementById('messages-container');
+    const replyInput = document.getElementById('reply-input');
+    const sendReplyBtn = document.getElementById('send-reply');
+    const backToChats = document.getElementById('back-to-chats');
+    const dialogTitle = document.getElementById('dialog-title');
+
+    // ===== ЛОГИН =====
+    loginBtn.addEventListener('click', async () => {
+      const password = passwordInput.value;
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          token = data.token;
+          loginScreen.style.display = 'none';
+          mainApp.style.display = 'flex';
+          initApp();
+        } else {
+          loginError.style.display = 'block';
+        }
+      } catch {
+        loginError.style.display = 'block';
+      }
+    });
+
+    // ===== НАВИГАЦИЯ =====
+    navBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const section = btn.dataset.section;
+        navBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        Object.keys(sections).forEach(key => {
+          sections[key].classList.toggle('active', key === section);
+        });
+        if (section === 'chats') {
+          dialogView.style.display = 'none';
+          loadChats();
+        } else if (section === 'rules') {
+          loadRules();
+        } else if (section === 'settings') {
+          loadSettings();
+        }
+      });
+    });
+    // по умолчанию показываем чаты
+    document.querySelector('[data-section="chats"]').click();
+
+    // ===== ИНИЦИАЛИЗАЦИЯ =====
+    function initApp() {
+      loadChats();
+      if (unreadInterval) clearInterval(unreadInterval);
+      unreadInterval = setInterval(() => {
+        if (document.querySelector('#section-chats.active')) {
+          loadChats();
+        }
+      }, 5000);
+    }
+
+    // ===== ЗАГРУЗКА ЧАТОВ =====
+    async function loadChats() {
+      try {
+        const res = await fetch('/api/chats', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const chats = await res.json();
+        chatsList.innerHTML = chats.map(chat => `
+          <div class="chat-item" data-chatid="${chat.chatId}">
+            <div><strong>${chat.name || 'Клиент'}</strong> (${chat.phone || 'нет телефона'})</div>
+            <div>${chat.lastMessage || 'Нет сообщений'}</div>
+            <div style="font-size:12px;color:#888;">${chat.lastTime ? new Date(chat.lastTime).toLocaleString() : ''}</div>
+            ${chat.unread > 0 ? `<span class="unread">${chat.unread}</span>` : ''}
+          </div>
+        `).join('');
+        document.querySelectorAll('.chat-item').forEach(el => {
+          el.addEventListener('click', () => {
+            const chatId = el.dataset.chatid;
+            openDialog(chatId);
+          });
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // ===== ОТКРЫТЬ ДИАЛОГ =====
+    async function openDialog(chatId) {
+      currentChatId = chatId;
+      dialogView.style.display = 'block';
+      sections.chats.style.display = 'none';
+      try {
+        const res = await fetch(`/api/chats/${chatId}/messages`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const messages = await res.json();
+        messagesContainer.innerHTML = messages.map(msg => `
+          <div class="message ${msg.sender}">${msg.text} <span style="font-size:10px;color:#999;">${new Date(msg.time).toLocaleTimeString()}</span></div>
+        `).join('');
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        await fetch(`/api/chats/${chatId}/read`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });
+        dialogTitle.textContent = `Чат с ${chatId}`;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    backToChats.addEventListener('click', () => {
+      dialogView.style.display = 'none';
+      sections.chats.style.display = 'block';
+      loadChats();
+    });
+
+    // ===== ОТПРАВКА СООБЩЕНИЯ =====
+    sendReplyBtn.addEventListener('click', async () => {
+      const text = replyInput.value.trim();
+      if (!text || !currentChatId) return;
+      try {
+        await fetch('/api/chats/message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ chatId: currentChatId, text })
+        });
+        replyInput.value = '';
+        openDialog(currentChatId);
+      } catch (e) {
+        console.error(e);
+      }
+    });
+    replyInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendReplyBtn.click(); });
+
+    // ===== СЦЕНАРИИ (АВТООТВЕТЫ) =====
+    async function loadRules() {
+      try {
+        const res = await fetch('/api/rules', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const rules = await res.json();
+        const tbody = document.getElementById('rules-body');
+        tbody.innerHTML = rules.map(rule => `
+          <tr>
+            <td>${rule.keyword}</td>
+            <td>${rule.response}</td>
+            <td>${rule.active ? '✅' : '❌'}</td>
+            <td class="actions">
+              <button onclick="editRule('${rule.id}')">✏️</button>
+              <button onclick="deleteRule('${rule.id}')">🗑️</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) { console.error(e); }
+    }
+
+    document.getElementById('add-rule-btn').addEventListener('click', () => {
+      const keyword = prompt('Введите ключевое слово:');
+      if (!keyword) return;
+      const response = prompt('Введите ответ бота:');
+      if (!response) return;
+      fetch('/api/rules', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ keyword, response, active: true })
+      }).then(() => loadRules());
+    });
+
+    window.editRule = async (id) => {
+      // Упрощённо – можно сделать модальное окно
+      alert('Редактирование пока не реализовано, но вы можете сделать это через таблицу.');
+    };
+    window.deleteRule = async (id) => {
+      if (!confirm('Удалить правило?')) return;
+      await fetch(`/api/rules/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+      loadRules();
+    };
+
+    // ===== НАСТРОЙКИ =====
+    async function loadSettings() {
+      try {
+        const res = await fetch('/api/settings', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        document.getElementById('bot-token-input').value = data.botToken || '';
+      } catch (e) { console.error(e); }
+    }
+
+    document.getElementById('save-settings-btn').addEventListener('click', async () => {
+      const botToken = document.getElementById('bot-token-input').value.trim();
+      if (!botToken) return alert('Введите токен');
+      try {
+        await fetch('/api/settings', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ botToken })
+        });
+        document.getElementById('settings-message').textContent = 'Сохранено! Перезапустите сервер для применения нового токена.';
+      } catch (e) { console.error(e); }
+    });
+  </script>
 </body>
 </html>
