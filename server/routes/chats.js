@@ -27,7 +27,9 @@ router.get('/', auth, async (req, res) => {
       lastTime: row[4] || '',
       unread: unreadCounts[row[0]] || 0
     }));
-
+res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+res.setHeader('Pragma', 'no-cache');
+res.setHeader('Expires', '0');
     res.json(result);
   } catch (err) {
     console.error('Ошибка загрузки чатов:', err);
