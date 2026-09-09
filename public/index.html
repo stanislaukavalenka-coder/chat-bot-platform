@@ -25,12 +25,29 @@
     .chat-item { background: white; padding: 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: pointer; position: relative; }
     .chat-item .unread { background: red; color: white; border-radius: 50%; padding: 2px 8px; font-size: 12px; position: absolute; right: 10px; top: 10px; }
 
-    #dialog-view { background: white; padding: 20px; border-radius: 8px; }
-    #messages-container { max-height: 400px; overflow-y: auto; margin-bottom: 15px; }
-    .message { margin: 8px 0; padding: 8px 12px; border-radius: 10px; display: inline-block; max-width: 80%; }
-    .message.client { background: #e9ecef; text-align: left; }
-    .message.bot { background: #d4edda; }
-    .message.manager { background: #cce5ff; text-align: left; }
+    #dialog-view { background: white; padding: 20px; border-radius: 8px; margin-top: 10px; }
+    #messages-container {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: #f9f9f9;
+      border-radius: 6px;
+    }
+    .message-wrapper { display: flex; flex-direction: column; margin: 4px 0; }
+    .message {
+      max-width: 70%;
+      padding: 8px 12px;
+      border-radius: 10px;
+      word-wrap: break-word;
+    }
+    .message.client { background: #e9ecef; align-self: flex-start; }
+    .message.bot { background: #d4edda; align-self: flex-start; }
+    .message.manager { background: #cce5ff; align-self: flex-end; }
+    .message-time { font-size: 10px; color: #999; margin-top: 2px; }
 
     #reply-area { display: flex; gap: 10px; }
     #reply-input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
@@ -139,6 +156,39 @@
     const backToChats = document.getElementById('back-to-chats');
     const dialogTitle = document.getElementById('dialog-title');
 
+    // ===== ВЫХОД =====
+    function logout() {
+      localStorage.removeItem('chatBotToken');
+      token = null;
+      loginScreen.style.display = 'block';
+      mainApp.style.display = 'none';
+      if (unreadInterval) clearInterval(unreadInterval);
+    }
+
+    // ===== АВТОМАТИЧЕСКИЙ ВХОД =====
+    async function autoLogin() {
+      const savedToken = localStorage.getItem('chatBotToken');
+      if (!savedToken) return false;
+      try {
+        const res = await fetch('/api/chats', {
+          headers: { 'Authorization': `Bearer ${savedToken}` }
+        });
+        if (res.ok) {
+          token = savedToken;
+          loginScreen.style.display = 'none';
+          mainApp.style.display = 'flex';
+          initApp();
+          return true;
+        } else {
+          logout();
+          return false;
+        }
+      } catch (e) {
+        logout();
+        return false;
+      }
+    }
+
     // ===== ЛОГИН =====
     loginBtn.addEventListener('click', async () => {
       const password = passwordInput.value;
@@ -151,6 +201,7 @@
         const data = await res.json();
         if (res.ok) {
           token = data.token;
+          localStorage.setItem('chatBotToken', token);
           loginScreen.style.display = 'none';
           mainApp.style.display = 'flex';
           initApp();
@@ -201,6 +252,10 @@
         const res = await fetch('/api/chats', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (!res.ok) {
+          if (res.status === 401) { logout(); return; }
+          throw new Error('Ошибка загрузки чатов');
+        }
         const chats = await res.json();
         chatsList.innerHTML = chats.map(chat => `
           <div class="chat-item" data-chatid="${chat.chatId}">
@@ -230,10 +285,21 @@
         const res = await fetch(`/api/chats/${chatId}/messages`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (!res.ok) {
+          if (res.status === 401) { logout(); return; }
+          throw new Error('Ошибка загрузки сообщений');
+        }
         const messages = await res.json();
-        messagesContainer.innerHTML = messages.map(msg => `
-          <div class="message ${msg.sender}">${msg.text} <span style="font-size:10px;color:#999;">${new Date(msg.time).toLocaleTimeString()}</span></div>
-        `).join('');
+        messagesContainer.innerHTML = messages.map(msg => {
+          const senderClass = msg.sender === 'manager' ? 'manager' : (msg.sender === 'bot' ? 'bot' : 'client');
+          const align = msg.sender === 'manager' ? 'flex-end' : 'flex-start';
+          return `
+            <div class="message-wrapper">
+              <div class="message ${senderClass}">${msg.text}</div>
+              <div class="message-time" style="align-self: ${align}">${new Date(msg.time).toLocaleTimeString()}</div>
+            </div>
+          `;
+        }).join('');
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
         await fetch(`/api/chats/${chatId}/read`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });
         dialogTitle.textContent = `Чат с ${chatId}`;
@@ -253,11 +319,15 @@
       const text = replyInput.value.trim();
       if (!text || !currentChatId) return;
       try {
-        await fetch('/api/chats/message', {
+        const res = await fetch('/api/chats/message', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ chatId: currentChatId, text })
         });
+        if (!res.ok) {
+          if (res.status === 401) { logout(); return; }
+          throw new Error('Ошибка отправки');
+        }
         replyInput.value = '';
         openDialog(currentChatId);
       } catch (e) {
@@ -272,6 +342,10 @@
         const res = await fetch('/api/rules', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (!res.ok) {
+          if (res.status === 401) { logout(); return; }
+          throw new Error('Ошибка загрузки правил');
+        }
         const rules = await res.json();
         const tbody = document.getElementById('rules-body');
         tbody.innerHTML = rules.map(rule => `
@@ -301,13 +375,18 @@
     });
 
     window.editRule = async (id) => {
-      // Упрощённо – можно сделать модальное окно
       alert('Редактирование пока не реализовано, но вы можете сделать это через таблицу.');
     };
     window.deleteRule = async (id) => {
       if (!confirm('Удалить правило?')) return;
-      await fetch(`/api/rules/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-      loadRules();
+      try {
+        const res = await fetch(`/api/rules/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+        if (!res.ok) {
+          if (res.status === 401) { logout(); return; }
+          throw new Error('Ошибка удаления');
+        }
+        loadRules();
+      } catch (e) { console.error(e); }
     };
 
     // ===== НАСТРОЙКИ =====
@@ -316,6 +395,10 @@
         const res = await fetch('/api/settings', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (!res.ok) {
+          if (res.status === 401) { logout(); return; }
+          throw new Error('Ошибка загрузки настроек');
+        }
         const data = await res.json();
         document.getElementById('bot-token-input').value = data.botToken || '';
       } catch (e) { console.error(e); }
@@ -325,14 +408,27 @@
       const botToken = document.getElementById('bot-token-input').value.trim();
       if (!botToken) return alert('Введите токен');
       try {
-        await fetch('/api/settings', {
+        const res = await fetch('/api/settings', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ botToken })
         });
+        if (!res.ok) {
+          if (res.status === 401) { logout(); return; }
+          throw new Error('Ошибка сохранения');
+        }
         document.getElementById('settings-message').textContent = 'Сохранено! Перезапустите сервер для применения нового токена.';
       } catch (e) { console.error(e); }
     });
+
+    // ===== ПРИ ЗАГРУЗКЕ СТРАНИЦЫ =====
+    (async function() {
+      const loggedIn = await autoLogin();
+      if (!loggedIn) {
+        loginScreen.style.display = 'block';
+        mainApp.style.display = 'none';
+      }
+    })();
   </script>
 </body>
 </html>
