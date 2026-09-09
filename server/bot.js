@@ -91,7 +91,7 @@ bot.on('message:text', async (ctx) => {
   // Отправка push-уведомлений
   const userName = ctx.from.username || 'Клиент';
   await sendPushToSubscribers(
-    `Новое сообщение от ${userName}`,
+    `${userName}`,
     text,
     'https://chat-bot-platform-8mge.onrender.com/'
   );
