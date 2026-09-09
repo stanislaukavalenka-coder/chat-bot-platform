@@ -7,8 +7,10 @@ const { bot } = require('../bot');
 // GET /api/chats – список всех чатов с непрочитанными
 router.get('/', auth, async (req, res) => {
   try {
-    const chats = await getSheetData('Chats!A:E'); // chat_id, name, phone, last_msg, last_time
-    const messages = await getSheetData('Messages!A:F'); // id, chat_id, sender, text, time, is_read
+    const chats = await getSheetData('Chats!A:E');
+    // Фильтруем строки с пустым chat_id
+    const validChats = chats.filter(row => row[0] && row[0].toString().trim() !== '');
+    const messages = await getSheetData('Messages!A:F');
 
     const unreadCounts = {};
     messages.forEach(row => {
@@ -17,7 +19,7 @@ router.get('/', auth, async (req, res) => {
       }
     });
 
-    const result = chats.map(row => ({
+    const result = validChats.map(row => ({
       chatId: row[0],
       name: row[1] || 'Клиент',
       phone: row[2] || '',
@@ -28,7 +30,7 @@ router.get('/', auth, async (req, res) => {
 
     res.json(result);
   } catch (err) {
-    console.error(err);
+    console.error('Ошибка загрузки чатов:', err);
     res.status(500).json({ error: 'Ошибка загрузки чатов' });
   }
 });
@@ -39,7 +41,7 @@ router.get('/:chatId/messages', auth, async (req, res) => {
     const chatId = req.params.chatId;
     const messages = await getSheetData('Messages!A:F');
     const filtered = messages
-      .filter(row => row[1] == chatId)
+      .filter(row => row[1] && row[1].toString() === chatId.toString())
       .map(row => ({
         id: row[0],
         sender: row[2],
@@ -49,7 +51,7 @@ router.get('/:chatId/messages', auth, async (req, res) => {
       }));
     res.json(filtered);
   } catch (err) {
-    console.error(err);
+    console.error('Ошибка загрузки сообщений:', err);
     res.status(500).json({ error: 'Ошибка загрузки сообщений' });
   }
 });
@@ -62,7 +64,7 @@ router.post('/message', auth, async (req, res) => {
   }
 
   try {
-    // Сохраняем сообщение
+    // Сохраняем сообщение менеджера
     await appendSheetData('Messages!A:F', [
       [Date.now(), chatId, 'manager', text, new Date().toISOString(), 'TRUE']
     ]);
@@ -72,9 +74,13 @@ router.post('/message', auth, async (req, res) => {
 
     // Обновляем последнее сообщение в чате
     const chats = await getSheetData('Chats!A:E');
-    const rowIndex = chats.findIndex(row => row[0] == chatId) + 2;
-    if (rowIndex >= 2) {
-      await updateSheetData(`Chats!D${rowIndex}:E${rowIndex}`, [[text, new Date().toISOString()]]);
+    const validChats = chats.filter(row => row[0] && row[0].toString().trim() !== '');
+    const chatRow = validChats.find(row => row[0].toString() === chatId.toString());
+    if (chatRow) {
+      const rowIndex = chats.indexOf(chatRow) + 2;
+      await updateSheetData(`Chats!D${rowIndex}:E${rowIndex}`, [
+        [text, new Date().toISOString()]
+      ]);
     }
 
     res.json({ success: true });
@@ -90,7 +96,7 @@ router.put('/:chatId/read', auth, async (req, res) => {
   try {
     const messages = await getSheetData('Messages!A:F');
     const updates = messages.map((row, index) => {
-      if (row[1] == chatId && row[5] !== 'TRUE') {
+      if (row[1] && row[1].toString() === chatId.toString() && row[5] !== 'TRUE') {
         const rowNum = index + 2;
         return updateSheetData(`Messages!F${rowNum}:F${rowNum}`, [['TRUE']]);
       }
@@ -99,7 +105,7 @@ router.put('/:chatId/read', auth, async (req, res) => {
     await Promise.all(updates.filter(Boolean));
     res.json({ success: true });
   } catch (err) {
-    console.error(err);
+    console.error('Ошибка обновления прочитанных:', err);
     res.status(500).json({ error: 'Ошибка обновления' });
   }
 });
