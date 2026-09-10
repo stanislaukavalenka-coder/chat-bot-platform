@@ -16,7 +16,7 @@ async function sendPushToSubscribers(title, body, url) {
   try {
     const data = await getSheetData('PushSubscriptions!A:B');
     const subscriptions = data
-      .slice(1) // убираем заголовок
+      .slice(1)
       .filter(row => row[0] && row[0].trim() !== '' && row[0].trim() !== 'subscription')
       .map(row => {
         try {
@@ -42,13 +42,21 @@ async function sendPushToSubscribers(title, body, url) {
         console.log('Push уведомление отправлено');
       } catch (err) {
         console.error('Ошибка отправки push:', err.message);
-        if (err.statusCode === 410 || err.statusCode === 404) {
-          // TODO: удалить невалидную подписку
-        }
       }
     }
   } catch (err) {
     console.error('Ошибка получения подписок для push:', err);
+  }
+}
+
+// ---------- ОБНОВЛЕНИЕ ПОСЛЕДНЕГО СООБЩЕНИЯ В CHATS ----------
+async function updateChatLastMessage(userId, text, sender) {
+  const chats = await getSheetData('Chats!A:F');
+  const rowIndex = chats.findIndex(row => row[0] && row[0].toString() === userId.toString()) + 2;
+  if (rowIndex >= 2) {
+    await updateSheetData(`Chats!D${rowIndex}:F${rowIndex}`, [
+      [text, new Date().toISOString(), sender]
+    ]);
   }
 }
 
@@ -59,15 +67,14 @@ bot.on('message:text', async (ctx) => {
   const userName = ctx.from.first_name || ctx.from.username || 'Клиент';
   const username = ctx.from.username || 'без username';
 
-  // --- Обновление таблицы Chats ---
-  const chats = await getSheetData('Chats!A:E');
+  const chats = await getSheetData('Chats!A:F');
   const validChats = chats.filter(row => row[0] && row[0].toString().trim() !== '');
   const chatRow = validChats.find(row => row[0].toString() === userId.toString());
 
   if (!chatRow) {
-    // Новый пользователь — добавляем строку и просим телефон
-    await appendSheetData('Chats!A:E', [
-      [userId, username, '', text, new Date().toISOString()]
+    // Новый пользователь — добавляем строку
+    await appendSheetData('Chats!A:F', [
+      [userId, username, '', text, new Date().toISOString(), 'client']
     ]);
 
     await ctx.reply(
@@ -81,26 +88,16 @@ bot.on('message:text', async (ctx) => {
       }
     );
   } else {
-    // Пользователь уже есть — обновляем последнее сообщение и время
-    const rowIndex = chats.findIndex(row => row[0] && row[0].toString() === userId.toString()) + 2;
-    if (rowIndex >= 2) {
-      await updateSheetData(`Chats!D${rowIndex}:E${rowIndex}`, [
-        [text, new Date().toISOString()]
-      ]);
-    } else {
-      // Fallback: если вдруг не нашли — добавляем новую строку
-      await appendSheetData('Chats!A:E', [
-        [userId, username, '', text, new Date().toISOString()]
-      ]);
-    }
+    // Обновляем последнее сообщение клиента
+    await updateChatLastMessage(userId, text, 'client');
   }
 
-  // --- Сохранение сообщения клиента в Messages ---
+  // Сохранение сообщения клиента в Messages
   await appendSheetData('Messages!A:F', [
     [ctx.message.message_id, userId, 'client', text, new Date().toISOString(), 'FALSE']
   ]);
 
-  // --- Проверка автоответов ---
+  // Проверка автоответов
   const rules = await getSheetData('Rules!A:D');
   const matchingRule = rules.find(row =>
     row[2] === 'TRUE' && text.toLowerCase().includes(row[0].toLowerCase())
@@ -111,9 +108,11 @@ bot.on('message:text', async (ctx) => {
     await appendSheetData('Messages!A:F', [
       [`bot_${ctx.message.message_id}`, userId, 'bot', matchingRule[1], new Date().toISOString(), 'TRUE']
     ]);
+    // Обновляем last_message как bot
+    await updateChatLastMessage(userId, matchingRule[1], 'bot');
   }
 
-  // --- Отправка push-уведомлений менеджерам ---
+  // Push-уведомления
   await sendPushToSubscribers(
     `📩 Новое сообщение от ${userName}`,
     text,
@@ -121,13 +120,12 @@ bot.on('message:text', async (ctx) => {
   );
 });
 
-// ---------- ОБРАБОТЧИК КОНТАКТА (номер телефона) ----------
+// ---------- ОБРАБОТЧИК КОНТАКТА ----------
 bot.on('message:contact', async (ctx) => {
   const userId = ctx.from.id;
   const phone = ctx.message.contact.phone_number;
 
-  // Обновляем телефон в Chats (столбец C)
-  const chats = await getSheetData('Chats!A:E');
+  const chats = await getSheetData('Chats!A:F');
   const rowIndex = chats.findIndex(row => row[0] && row[0].toString() === userId.toString()) + 2;
 
   if (rowIndex >= 2) {
@@ -136,11 +134,10 @@ bot.on('message:contact', async (ctx) => {
       reply_markup: { remove_keyboard: true }
     });
   } else {
-    // Если пользователя нет в Chats (например, отправил контакт первым)
     const userName = ctx.from.first_name || ctx.from.username || 'Клиент';
     const username = ctx.from.username || 'без username';
-    await appendSheetData('Chats!A:E', [
-      [userId, username, phone, 'Поделился контактом', new Date().toISOString()]
+    await appendSheetData('Chats!A:F', [
+      [userId, username, phone, 'Поделился контактом', new Date().toISOString(), 'client']
     ]);
     await ctx.reply('Спасибо! Номер сохранён.', {
       reply_markup: { remove_keyboard: true }
