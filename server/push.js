@@ -3,19 +3,27 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const { getSheetData, appendSheetData, updateSheetData } = require('../sheets');
 
+// GET /api/push/subscriptions
 router.get('/subscriptions', auth, async (req, res) => {
   try {
     const data = await getSheetData('PushSubscriptions!A:B');
-    const subs = data.filter(row => row[0]).map(row => ({
-      subscription: JSON.parse(row[0]),
-      userId: row[1]
-    }));
+    const subs = data
+      .filter(row => row[0] && row[0].trim() !== '' && row[0].trim() !== 'subscription')
+      .map(row => {
+        try {
+          return { subscription: JSON.parse(row[0]), userId: row[1] };
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean);
     res.json(subs);
   } catch (err) {
     res.status(500).json({ error: 'Ошибка получения подписок' });
   }
 });
 
+// POST /api/push/subscribe
 router.post('/subscribe', auth, async (req, res) => {
   const subscription = req.body;
   const userId = req.user.id || 'admin';
@@ -41,6 +49,7 @@ router.post('/subscribe', auth, async (req, res) => {
   }
 });
 
+// DELETE /api/push/unsubscribe
 router.delete('/unsubscribe', auth, async (req, res) => {
   const userId = req.user.id || 'admin';
   try {
