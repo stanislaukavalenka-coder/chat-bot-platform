@@ -67,11 +67,18 @@ bot.on('message:text', async (ctx) => {
       [userId, username, '', text, new Date().toISOString()]
     ]);
   } else {
-    const rowIndex = chats.indexOf(chatRow) + 2;
+    const rowIndex = chats.findIndex(row => row[0] && row[0].toString() === userId.toString()) + 2;
+  if (rowIndex >= 2) {
     await updateSheetData(`Chats!D${rowIndex}:E${rowIndex}`, [
       [text, new Date().toISOString()]
     ]);
+  } else {
+    // Если не найден (на всякий случай) – добавляем новую строку
+    await appendSheetData('Chats!A:E', [
+      [userId, username, '', text, new Date().toISOString()]
+    ]);
   }
+}
 
   await appendSheetData('Messages!A:F', [
     [Date.now(), userId, 'client', text, new Date().toISOString(), 'FALSE']
