@@ -107,7 +107,7 @@
     /* ===== МОДАЛКИ ===== */
     .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
     .modal-backdrop.visible { display: flex; }
-    .modal-content { background: white; border-radius: 12px; padding: 24px; max-width: 500px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+    .modal-content { background: white; border-radius: 12px; padding: 24px; max-width: 500px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
     .modal-content h3 { margin-bottom: 16px; font-size: 18px; }
     .modal-content textarea { width: 100%; min-height: 120px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical; outline: none; }
     .modal-content textarea:focus { border-color: #3390ec; }
@@ -277,9 +277,9 @@
         <input type="text" id="cm-name" placeholder="Имя" />
       </div>
       <div class="form-row">
-  <label>Фамилия</label>
-  <input type="text" id="cm-lastname" placeholder="Фамилия" />
-</div>
+        <label>Фамилия</label>
+        <input type="text" id="cm-lastname" placeholder="Фамилия" />
+      </div>
       <div class="form-row">
         <label>Логин (без @)</label>
         <input type="text" id="cm-username" placeholder="username" />
@@ -311,7 +311,7 @@
     let chatsCache = {};
     let clientsData = [];
     let selectedClients = new Set();
-    let currentClientModal = null; // chatId клиента в модалке
+    let currentClientModal = null;
 
     // ===== DOM =====
     const loginScreen = document.getElementById('login-screen');
@@ -339,6 +339,19 @@
     const backBtn = document.getElementById('back-btn');
     const emptyState = document.getElementById('empty-state');
 
+    // ===== МОДАЛКА КАРТОЧКИ КЛИЕНТА =====
+    const clientModal = document.getElementById('client-modal');
+    const cmAvatar = document.getElementById('cm-avatar');
+    const cmTitle = document.getElementById('cm-title');
+    const cmSourceTop = document.getElementById('cm-source');
+    const cmName = document.getElementById('cm-name');
+    const cmLastName = document.getElementById('cm-lastname');
+    const cmUsername = document.getElementById('cm-username');
+    const cmPhone = document.getElementById('cm-phone');
+    const cmCity = document.getElementById('cm-city');
+    const cmChatId = document.getElementById('cm-chatid');
+    const cmSource2 = document.getElementById('cm-source-2');
+
     // ===== АВАТАРКИ =====
     const AVATAR_COLORS = ['#e17076', '#7bc862', '#65aadd', '#a695e7', '#ee7aae', '#6ec9cb', '#faa774', '#e5a238', '#a1c54a', '#7f8fa6'];
     function getAvatarColor(str) {
@@ -347,6 +360,10 @@
       return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
     }
     function getInitial(name) { return (name || 'К').trim().charAt(0).toUpperCase(); }
+
+    function fullName(client) {
+      return [client.name, client.lastName].filter(Boolean).join(' ') || 'Клиент';
+    }
 
     // ===== ВЫХОД / АВТО-ВХОД / ЛОГИН =====
     function logout() {
@@ -472,8 +489,9 @@
         chats.forEach(c => chatsCache[c.chatId] = c);
 
         chatsList.innerHTML = chats.map(chat => {
-          const color = getAvatarColor(chat.name);
-          const initial = getInitial(chat.name);
+          const name = chat.displayName || chat.name || 'Клиент';
+          const color = getAvatarColor(name);
+          const initial = getInitial(name);
           const isUnread = chat.unread > 0;
           const time = chat.lastTime ? formatTime(chat.lastTime) : '';
           const prefix = getSenderPrefix(chat.lastSender);
@@ -484,7 +502,7 @@
               <div class="chat-avatar" style="background: ${color}">${initial}</div>
               <div class="chat-info">
                 <div class="chat-info-top">
-                  <div class="chat-name">${escapeHtml(chat.name)}</div>
+                  <div class="chat-name">${escapeHtml(name)}</div>
                   <div class="chat-time">${time}</div>
                 </div>
                 <div class="chat-info-bottom">
@@ -527,10 +545,11 @@
     async function openDialog(chatId, silent = false) {
       currentChatId = chatId;
       const chat = chatsCache[chatId] || {};
-      const color = getAvatarColor(chat.name);
+      const name = chat.displayName || chat.name || 'Клиент';
+      const color = getAvatarColor(name);
       dialogHeaderAvatar.style.background = color;
-      dialogHeaderAvatar.textContent = getInitial(chat.name);
-      dialogTitle.textContent = chat.name || 'Чат';
+      dialogHeaderAvatar.textContent = getInitial(name);
+      dialogTitle.textContent = name;
       dialogSubtitle.textContent = chat.phone || '';
 
       try {
@@ -593,21 +612,20 @@
     }
     backBtn.addEventListener('click', (e) => { e.stopPropagation(); showChatsList(); });
 
-    // ===== КЛИК ПО ШАПКЕ ДИАЛОГА =====
+    // ===== КЛИК ПО ШАПКЕ ДИАЛОГА → КАРТОЧКА КЛИЕНТА =====
     dialogHeader.addEventListener('click', () => {
       if (!currentChatId) return;
       const chat = chatsCache[currentChatId];
       if (!chat) return;
-      // Формируем объект-клиент из данных чата
-      const client = {
+      openClientModal({
         chatId: chat.chatId,
         name: chat.name || '',
+        lastName: chat.lastName || '',
         phone: chat.phone || '',
         city: chat.city || '',
         username: chat.username || '',
         source: chat.source || 'Telegram'
-      };
-      openClientModal(client);
+      });
     });
 
     // ===== ОТПРАВКА =====
@@ -687,11 +705,13 @@
       const filtered = clientsData.filter(c => {
         if (cityFilter && c.city !== cityFilter) return false;
         if (!query) return true;
-        return (c.name || '').toLowerCase().includes(query) || (c.phone || '').includes(query);
+        const fname = fullName(c).toLowerCase();
+        return fname.includes(query) || (c.phone || '').includes(query);
       });
 
       const tbody = document.getElementById('clients-body');
       tbody.innerHTML = filtered.map(client => {
+        const name = fullName(client);
         const color = getAvatarColor(client.name);
         const initial = getInitial(client.name);
         const checked = selectedClients.has(client.chatId) ? 'checked' : '';
@@ -702,7 +722,7 @@
             <td>
               <div style="display:flex; align-items:center; gap:8px;">
                 <div class="chat-avatar" style="background:${color}; width:28px; height:28px; font-size:12px;">${initial}</div>
-                <span>${escapeHtml(client.name)}</span>
+                <span>${escapeHtml(name)}</span>
               </div>
             </td>
             <td onclick="event.stopPropagation()"><input type="text" class="phone-input" data-chatid="${client.chatId}" value="${escapeHtml(client.phone)}" placeholder="—"></td>
@@ -713,7 +733,6 @@
         `;
       }).join('');
 
-      // Клик по строке (не по input)
       document.querySelectorAll('.client-row').forEach(row => {
         row.addEventListener('click', () => {
           const chatId = row.dataset.chatid;
@@ -776,7 +795,8 @@
       const visibleClients = clientsData.filter(c => {
         if (cityFilter && c.city !== cityFilter) return false;
         if (!query) return true;
-        return (c.name || '').toLowerCase().includes(query) || (c.phone || '').includes(query);
+        const fname = fullName(c).toLowerCase();
+        return fname.includes(query) || (c.phone || '').includes(query);
       });
 
       const allSelected = visibleClients.every(c => selectedClients.has(c.chatId));
@@ -801,27 +821,18 @@
       }
     }
 
-    // ===== МОДАЛКА КАРТОЧКИ КЛИЕНТА =====
-    const clientModal = document.getElementById('client-modal');
-    const cmAvatar = document.getElementById('cm-avatar');
-    const cmTitle = document.getElementById('cm-title');
-    const cmSourceTop = document.getElementById('cm-source');
-    const cmName = document.getElementById('cm-name');
-    const cmUsername = document.getElementById('cm-username');
-    const cmPhone = document.getElementById('cm-phone');
-    const cmCity = document.getElementById('cm-city');
-    const cmChatId = document.getElementById('cm-chatid');
-    const cmSource2 = document.getElementById('cm-source-2');
-
+    // ===== КАРТОЧКА КЛИЕНТА =====
     function openClientModal(client) {
       currentClientModal = client.chatId;
+      const name = fullName(client);
       const color = getAvatarColor(client.name);
       cmAvatar.style.background = color;
       cmAvatar.textContent = getInitial(client.name);
-      cmTitle.textContent = client.name || 'Клиент';
+      cmTitle.textContent = name;
       cmSourceTop.textContent = client.source || 'Telegram';
 
       cmName.value = client.name || '';
+      cmLastName.value = client.lastName || '';
       cmUsername.value = client.username || '';
       cmPhone.value = client.phone || '';
       cmCity.value = client.city || '';
@@ -839,6 +850,7 @@
     document.getElementById('cm-save').addEventListener('click', async () => {
       if (!currentClientModal) return;
       const name = cmName.value.trim();
+      const lastName = cmLastName.value.trim();
       const username = cmUsername.value.trim().replace(/^@/, '');
       const phone = cmPhone.value.trim();
       const city = cmCity.value.trim();
@@ -847,7 +859,7 @@
         const res = await fetch(`/api/clients/${currentClientModal}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ name, username, phone, city })
+          body: JSON.stringify({ name, lastName, username, phone, city })
         });
         if (!res.ok) throw new Error('Ошибка сохранения');
 
@@ -855,6 +867,7 @@
         const client = clientsData.find(c => String(c.chatId) === String(currentClientModal));
         if (client) {
           client.name = name;
+          client.lastName = lastName;
           client.username = username;
           client.phone = phone;
           client.city = city;
@@ -862,23 +875,25 @@
         // Обновляем кеш чатов
         if (chatsCache[currentClientModal]) {
           chatsCache[currentClientModal].name = name;
+          chatsCache[currentClientModal].lastName = lastName;
           chatsCache[currentClientModal].phone = phone;
           chatsCache[currentClientModal].city = city;
           chatsCache[currentClientModal].username = username;
+          chatsCache[currentClientModal].displayName = [name, lastName].filter(Boolean).join(' ') || 'Клиент';
         }
         // Обновляем шапку диалога, если открыт этот чат
         if (currentChatId === currentClientModal) {
+          const displayName = [name, lastName].filter(Boolean).join(' ') || 'Клиент';
           const color = getAvatarColor(name);
           dialogHeaderAvatar.style.background = color;
           dialogHeaderAvatar.textContent = getInitial(name);
-          dialogTitle.textContent = name;
+          dialogTitle.textContent = displayName;
           dialogSubtitle.textContent = phone || '';
         }
 
         clientModal.classList.remove('visible');
         currentClientModal = null;
 
-        // Обновляем интерфейс
         if (document.querySelector('[data-section="clients"]').classList.contains('active')) {
           updateCityFilter();
           renderClients();
