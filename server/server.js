@@ -19,6 +19,7 @@ const settingsRoutes = require('./routes/settings');
 const rulesRoutes = require('./routes/rules');
 const pushRoutes = require('./routes/push');
 const clientsRoutes = require('./routes/clients');
+const broadcastRoutes = require('./routes/broadcast');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/chats', chatsRoutes);
@@ -26,6 +27,7 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/rules', rulesRoutes);
 app.use('/api/push', pushRoutes);
 app.use('/api/clients', clientsRoutes);
+app.use('/api/broadcast', broadcastRoutes);
 
 // Раздача статики
 app.use(express.static(path.join(__dirname, '..', 'public')));
