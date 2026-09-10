@@ -16,41 +16,29 @@
     #login-screen button { width: 100%; padding: 10px; background: #3390ec; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
     #login-error { color: red; display: none; margin-top: 10px; }
 
-    /* ===== ГЛАВНЫЙ КАРКАС ===== */
+    /* ===== КАРКАС ===== */
     #main-app { display: none; height: 100vh; }
     #main-app.visible { display: flex; }
-    
-    /* Навигация */
+
     #navbar { background: #17212b; color: white; display: flex; justify-content: space-around; padding: 8px 0; flex-shrink: 0; }
     #navbar button { background: none; border: none; color: #7f91a4; font-size: 13px; padding: 8px 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
     #navbar button .icon { font-size: 20px; }
     #navbar button.active { color: #3390ec; }
 
-    /* ===== СОДЕРЖИМОЕ ===== */
     #content { flex: 1; display: flex; overflow: hidden; }
 
-    /* Панели чатов и диалога */
+    /* ===== ЧАТЫ ===== */
     #chats-panel { width: 100%; display: flex; flex-direction: column; background: white; overflow: hidden; }
     #dialog-panel { display: none; flex-direction: column; flex: 1; background: #e7ebf0; overflow: hidden; }
-    
-    /* ===== СПИСОК ЧАТОВ ===== */
     #chats-header { padding: 12px 16px; background: white; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; }
     #chats-header h2 { font-size: 18px; font-weight: 600; }
     #chats-list { flex: 1; overflow-y: auto; }
 
-    .chat-item {
-      display: flex; align-items: center; gap: 12px; padding: 10px 16px; cursor: pointer;
-      border-bottom: 1px solid #f0f2f5; transition: background 0.1s;
-    }
+    .chat-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; cursor: pointer; border-bottom: 1px solid #f0f2f5; transition: background 0.1s; }
     .chat-item:hover { background: #f5f7fa; }
     .chat-item.unread { background: #eef4fb; }
     .chat-item.unread:hover { background: #e3eefc; }
-
-    .chat-avatar {
-      width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      color: white; font-weight: 600; font-size: 18px;
-    }
+    .chat-avatar { width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 18px; }
     .chat-info { flex: 1; min-width: 0; }
     .chat-info-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
     .chat-name { font-size: 15px; color: #17212b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -60,109 +48,100 @@
     .chat-preview { font-size: 13px; color: #707d8f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .chat-item.unread .chat-preview { color: #17212b; font-weight: 500; }
     .chat-preview .sender-prefix { color: #8a9aa9; }
-    
-    .chat-unread-badge {
-      background: #3390ec; color: white; border-radius: 12px;
-      min-width: 22px; height: 22px; padding: 0 7px;
-      font-size: 12px; font-weight: 600;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; margin-left: 8px;
-    }
+    .chat-unread-badge { background: #3390ec; color: white; border-radius: 12px; min-width: 22px; height: 22px; padding: 0 7px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-left: 8px; }
 
     /* ===== ДИАЛОГ ===== */
-    #dialog-header {
-      background: white; padding: 10px 16px; border-bottom: 1px solid #e5e7eb;
-      display: flex; align-items: center; gap: 12px; flex-shrink: 0;
-    }
+    #dialog-header { background: white; padding: 10px 16px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
     #back-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #3390ec; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
     #dialog-header-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 16px; }
     #dialog-header-info { flex: 1; min-width: 0; }
     #dialog-title { font-size: 15px; font-weight: 600; color: #17212b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     #dialog-subtitle { font-size: 12px; color: #8a9aa9; }
 
-    #messages-container {
-      flex: 1; overflow-y: auto; padding: 16px;
-      display: flex; flex-direction: column; gap: 8px;
-      background: #e7ebf0;
-    }
-
+    #messages-container { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; background: #e7ebf0; }
     .message-wrapper { display: flex; flex-direction: column; max-width: 75%; }
     .message-wrapper.client { align-self: flex-start; }
     .message-wrapper.bot { align-self: flex-start; }
     .message-wrapper.manager { align-self: flex-end; align-items: flex-end; }
-
-    .message {
-      padding: 7px 12px 6px; border-radius: 12px; font-size: 14px; line-height: 1.4;
-      word-wrap: break-word; white-space: pre-wrap;
-      position: relative;
-    }
+    .message { padding: 7px 12px 6px; border-radius: 12px; font-size: 14px; line-height: 1.4; word-wrap: break-word; white-space: pre-wrap; }
     .message-wrapper.client .message { background: white; color: #17212b; border-bottom-left-radius: 4px; }
     .message-wrapper.bot .message { background: #d2e9ff; color: #17212b; border-bottom-left-radius: 4px; }
     .message-wrapper.manager .message { background: #effdde; color: #17212b; border-bottom-right-radius: 4px; }
     .message-time { font-size: 11px; color: #8a9aa9; margin-top: 2px; padding: 0 4px; display: flex; gap: 4px; align-items: center; }
-
     .checkmarks { color: #3390ec; font-size: 11px; }
-    .checkmarks.single { color: #8a9aa9; }
 
-    #reply-area {
-      background: white; padding: 10px 12px; display: flex; gap: 8px; align-items: flex-end;
-      border-top: 1px solid #e5e7eb; flex-shrink: 0;
-    }
-    #reply-input {
-      flex: 1; padding: 10px 14px; border: 1px solid #e5e7eb; border-radius: 20px;
-      font-size: 14px; resize: none; font-family: inherit; outline: none;
-    }
+    #reply-area { background: white; padding: 10px 12px; display: flex; gap: 8px; align-items: flex-end; border-top: 1px solid #e5e7eb; flex-shrink: 0; }
+    #reply-input { flex: 1; padding: 10px 14px; border: 1px solid #e5e7eb; border-radius: 20px; font-size: 14px; font-family: inherit; outline: none; }
     #reply-input:focus { border-color: #3390ec; }
-    #send-reply {
-      background: #3390ec; color: white; border: none; border-radius: 50%;
-      width: 40px; height: 40px; cursor: pointer; font-size: 16px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    #send-reply:disabled { opacity: 0.5; cursor: not-allowed; }
+    #send-reply { background: #3390ec; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+    #empty-state { flex: 1; display: flex; align-items: center; justify-content: center; color: #8a9aa9; font-size: 14px; background: #e7ebf0; }
 
-    /* ===== ЗАГЛУШКА ДЛЯ ПК ===== */
-    #empty-state {
-      flex: 1; display: flex; align-items: center; justify-content: center;
-      color: #8a9aa9; font-size: 14px; background: #e7ebf0;
-    }
-
-    /* ===== ОСТАЛЬНЫЕ РАЗДЕЛЫ (Сценарии, Настройки) ===== */
+    /* ===== ОБЩИЕ РАЗДЕЛЫ ===== */
     section.page-section { display: none; flex: 1; overflow-y: auto; padding: 20px; background: #f0f2f5; }
     section.page-section.active { display: block; }
     section.page-section h2 { margin-bottom: 15px; font-size: 18px; }
+
+    /* ===== КЛИЕНТЫ ===== */
+    #clients-toolbar { background: white; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    #client-search { flex: 1; min-width: 200px; padding: 8px 14px; border: 1px solid #e5e7eb; border-radius: 20px; font-size: 14px; outline: none; }
+    #client-search:focus { border-color: #3390ec; }
+    #city-filter { padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; background: white; cursor: pointer; }
+    #select-all-btn { padding: 8px 14px; border: 1px solid #3390ec; background: white; color: #3390ec; border-radius: 8px; cursor: pointer; font-size: 13px; }
+    #select-all-btn:hover { background: #3390ec; color: white; }
+
+    #clients-table { width: 100%; background: white; border-collapse: collapse; border-radius: 8px; overflow: hidden; }
+    #clients-table th, #clients-table td { padding: 10px 12px; text-align: left; font-size: 14px; border-bottom: 1px solid #e5e7eb; }
+    #clients-table th { background: #f5f7fa; font-weight: 600; font-size: 13px; color: #707d8f; }
+    #clients-table tr:hover { background: #f9fafb; }
+    #clients-table td input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+    .city-input, .phone-input { border: 1px solid transparent; background: transparent; padding: 4px 6px; border-radius: 4px; font-size: 14px; font-family: inherit; width: 100%; }
+    .city-input:hover, .phone-input:hover { border-color: #e5e7eb; background: white; }
+    .city-input:focus, .phone-input:focus { border-color: #3390ec; background: white; outline: none; }
+
+    #broadcast-btn { position: fixed; bottom: 80px; right: 20px; background: #3390ec; color: white; border: none; padding: 14px 24px; border-radius: 26px; cursor: pointer; font-size: 15px; font-weight: 600; box-shadow: 0 4px 12px rgba(51, 144, 236, 0.4); display: none; }
+    #broadcast-btn.visible { display: block; }
+    #broadcast-btn:hover { background: #2a7fd0; }
+
+    /* ===== МОДАЛКА ===== */
+    #modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+    #modal-backdrop.visible { display: flex; }
+    #modal-content { background: white; border-radius: 12px; padding: 24px; max-width: 500px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+    #modal-content h3 { margin-bottom: 16px; font-size: 18px; }
+    #modal-content textarea { width: 100%; min-height: 120px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical; outline: none; }
+    #modal-content textarea:focus { border-color: #3390ec; }
+    #modal-actions { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
+    #modal-actions button { padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; border: none; }
+    #modal-cancel { background: #f0f2f5; color: #17212b; }
+    #modal-send { background: #3390ec; color: white; }
+    #broadcast-progress { margin-top: 12px; font-size: 13px; color: #707d8f; }
+
+    /* ===== СЦЕНАРИИ / НАСТРОЙКИ ===== */
     #rules-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
     #rules-table th, #rules-table td { border-bottom: 1px solid #e5e7eb; padding: 10px; text-align: left; font-size: 14px; }
     #rules-table th { background: #f5f7fa; font-weight: 600; }
     #add-rule-btn { padding: 8px 16px; background: #3390ec; color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 15px; }
+    #rules-table .actions button { background: #3390ec; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
     #settings-form { max-width: 500px; background: white; padding: 20px; border-radius: 8px; }
     #settings-form label { display: block; margin-top: 15px; font-weight: 500; font-size: 14px; }
     #settings-form input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; }
     #settings-form button { margin-top: 15px; padding: 10px 20px; background: #3390ec; color: white; border: none; border-radius: 6px; cursor: pointer; }
     #settings-message { margin-top: 10px; color: #28a745; }
-    #rules-table .actions button { background: #3390ec; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; margin-right: 4px; }
 
-    /* ===== МОБИЛЬНАЯ НАВИГАЦИЯ (внизу) ===== */
+    /* ===== АДАПТИВ ===== */
     @media (max-width: 767px) {
       #main-app { flex-direction: column; }
       #navbar { order: 2; }
       #content { order: 1; }
+      #clients-table th:nth-child(4), #clients-table td:nth-child(4) { display: none; }
+      #clients-table th:nth-child(6), #clients-table td:nth-child(6) { display: none; }
     }
-
-    /* ===== ПК: навигация слева ===== */
     @media (min-width: 768px) {
       #main-app { flex-direction: row; }
-      #navbar {
-        flex-direction: column; width: 76px; justify-content: flex-start;
-        padding: 12px 0; gap: 4px; background: #17212b;
-      }
+      #navbar { flex-direction: column; width: 76px; justify-content: flex-start; padding: 12px 0; gap: 4px; background: #17212b; }
       #navbar button { padding: 10px 6px; font-size: 11px; }
       #navbar button .icon { font-size: 22px; }
-      
-      /* Двухпанельный вид */
       #chats-panel { width: 340px; border-right: 1px solid #e5e7eb; }
-      #dialog-panel { display: flex; } /* на ПК диалог всегда виден */
-      
-      /* Когда чат не выбран — показываем заглушку */
+      #dialog-panel { display: flex; }
       #dialog-panel.empty #dialog-header,
       #dialog-panel.empty #messages-container,
       #dialog-panel.empty #reply-area { display: none; }
@@ -183,11 +162,12 @@
     <nav id="navbar">
       <button class="nav-btn active" data-section="chats"><span class="icon">💬</span><span>Чаты</span></button>
       <button class="nav-btn" data-section="rules"><span class="icon">🤖</span><span>Сценарии</span></button>
+      <button class="nav-btn" data-section="clients"><span class="icon">👥</span><span>Клиенты</span></button>
       <button class="nav-btn" data-section="settings"><span class="icon">⚙️</span><span>Настройки</span></button>
     </nav>
 
     <div id="content">
-      <!-- РАЗДЕЛ ЧАТОВ (с двумя панелями) -->
+      <!-- ЧАТЫ -->
       <div id="section-chats" style="display: flex; flex: 1; overflow: hidden;">
         <div id="chats-panel">
           <div id="chats-header"><h2>Чаты</h2></div>
@@ -211,7 +191,7 @@
         </div>
       </div>
 
-      <!-- РАЗДЕЛ СЦЕНАРИИ -->
+      <!-- СЦЕНАРИИ -->
       <section id="section-rules" class="page-section">
         <h2>Автоответы</h2>
         <button id="add-rule-btn">+ Добавить правило</button>
@@ -221,7 +201,31 @@
         </table>
       </section>
 
-      <!-- РАЗДЕЛ НАСТРОЙКИ -->
+      <!-- КЛИЕНТЫ -->
+      <section id="section-clients" class="page-section">
+        <h2>Клиенты</h2>
+        <div id="clients-toolbar">
+          <input type="text" id="client-search" placeholder="Поиск по имени или телефону..." />
+          <select id="city-filter"><option value="">Все города</option></select>
+          <button id="select-all-btn">Выделить все</button>
+        </div>
+        <table id="clients-table">
+          <thead>
+            <tr>
+              <th style="width: 40px;"></th>
+              <th>Имя</th>
+              <th>Телефон</th>
+              <th>Город</th>
+              <th>Источник</th>
+              <th>Последнее</th>
+            </tr>
+          </thead>
+          <tbody id="clients-body"></tbody>
+        </table>
+        <button id="broadcast-btn">📤 Отправить рассылку</button>
+      </section>
+
+      <!-- НАСТРОЙКИ -->
       <section id="section-settings" class="page-section">
         <h2>Настройки бота</h2>
         <div id="settings-form">
@@ -234,12 +238,28 @@
     </div>
   </div>
 
+  <!-- МОДАЛКА РАССЫЛКИ -->
+  <div id="modal-backdrop">
+    <div id="modal-content">
+      <h3>Новая рассылка</h3>
+      <p style="font-size: 13px; color: #707d8f; margin-bottom: 12px;">Получателей: <span id="modal-count">0</span></p>
+      <textarea id="broadcast-text" placeholder="Введите текст сообщения..."></textarea>
+      <div id="broadcast-progress"></div>
+      <div id="modal-actions">
+        <button id="modal-cancel">Отмена</button>
+        <button id="modal-send">Отправить</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
+    // ===== ГЛОБАЛЬНЫЕ =====
     let token = null;
     let currentChatId = null;
     let unreadInterval = null;
-    let chatsCache = {}; // для быстрого доступа к данным чата
+    let chatsCache = {};
+    let clientsData = [];
+    let selectedClients = new Set();
 
     // ===== DOM =====
     const loginScreen = document.getElementById('login-screen');
@@ -251,6 +271,7 @@
     const navBtns = document.querySelectorAll('.nav-btn');
     const sectionChats = document.getElementById('section-chats');
     const sectionRules = document.getElementById('section-rules');
+    const sectionClients = document.getElementById('section-clients');
     const sectionSettings = document.getElementById('section-settings');
 
     const chatsList = document.getElementById('chats-list');
@@ -266,21 +287,14 @@
     const backBtn = document.getElementById('back-btn');
     const emptyState = document.getElementById('empty-state');
 
-    // ===== ЦВЕТА АВАТАРОК (как в Telegram) =====
-    const AVATAR_COLORS = [
-      '#e17076', '#7bc862', '#65aadd', '#a695e7', '#ee7aae',
-      '#6ec9cb', '#faa774', '#e5a238', '#a1c54a', '#7f8fa6'
-    ];
+    // ===== АВАТАРКИ =====
+    const AVATAR_COLORS = ['#e17076', '#7bc862', '#65aadd', '#a695e7', '#ee7aae', '#6ec9cb', '#faa774', '#e5a238', '#a1c54a', '#7f8fa6'];
     function getAvatarColor(str) {
       let hash = 0;
-      for (let i = 0; i < (str || '').length; i++) {
-        hash = (str.charCodeAt(i) + ((hash << 5) - hash)) | 0;
-      }
+      for (let i = 0; i < (str || '').length; i++) hash = (str.charCodeAt(i) + ((hash << 5) - hash)) | 0;
       return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
     }
-    function getInitial(name) {
-      return (name || 'К').trim().charAt(0).toUpperCase();
-    }
+    function getInitial(name) { return (name || 'К').trim().charAt(0).toUpperCase(); }
 
     // ===== ВЫХОД =====
     function logout() {
@@ -335,19 +349,21 @@
         navBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        // Скрываем всё
         sectionChats.style.display = 'none';
         sectionRules.classList.remove('active');
+        sectionClients.classList.remove('active');
         sectionSettings.classList.remove('active');
 
         if (section === 'chats') {
           sectionChats.style.display = 'flex';
-          // Возвращаемся к списку чатов (как кнопка "назад")
           showChatsList();
           loadChats();
         } else if (section === 'rules') {
           sectionRules.classList.add('active');
           loadRules();
+        } else if (section === 'clients') {
+          sectionClients.classList.add('active');
+          loadClients();
         } else if (section === 'settings') {
           sectionSettings.classList.add('active');
           loadSettings();
@@ -367,7 +383,7 @@
       }, 4000);
     }
 
-    // ===== PWA PUSH (без изменений) =====
+    // ===== PWA PUSH =====
     function urlBase64ToUint8Array(base64String) {
       const padding = '='.repeat((4 - base64String.length % 4) % 4);
       const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
@@ -402,10 +418,7 @@
     async function loadChats() {
       try {
         const res = await fetch('/api/chats', { headers: { 'Authorization': `Bearer ${token}` } });
-        if (!res.ok) {
-          if (res.status === 401) { logout(); return; }
-          throw new Error('Ошибка загрузки чатов');
-        }
+        if (!res.ok) { if (res.status === 401) { logout(); return; } throw new Error('Ошибка'); }
         const chats = await res.json();
         chatsCache = {};
         chats.forEach(c => chatsCache[c.chatId] = c);
@@ -415,7 +428,7 @@
           const initial = getInitial(chat.name);
           const isUnread = chat.unread > 0;
           const time = chat.lastTime ? formatTime(chat.lastTime) : '';
-          const prefix = getSenderPrefix(chat.lastSender, chat.name);
+          const prefix = getSenderPrefix(chat.lastSender);
           const lastMsg = (chat.lastMessage || '').substring(0, 60) + ((chat.lastMessage || '').length > 60 ? '...' : '');
 
           return `
@@ -439,14 +452,11 @@
           el.addEventListener('click', () => openDialog(el.dataset.chatid));
         });
 
-        // На ПК: если открыт чат — обновляем и его
-        if (window.innerWidth >= 768 && currentChatId) {
-          openDialog(currentChatId, true);
-        }
+        if (window.innerWidth >= 768 && currentChatId) openDialog(currentChatId, true);
       } catch (e) { console.error(e); }
     }
 
-    function getSenderPrefix(sender, name) {
+    function getSenderPrefix(sender) {
       if (sender === 'manager') return '<span class="sender-prefix">Вы: </span>';
       if (sender === 'bot') return '<span class="sender-prefix">Бот: </span>';
       return '';
@@ -457,47 +467,35 @@
       const d = new Date(iso);
       if (isNaN(d.getTime())) return '';
       const now = new Date();
-      const sameDay = d.toDateString() === now.toDateString();
-      if (sameDay) return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+      if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
       const yesterday = new Date(now); yesterday.setDate(now.getDate() - 1);
       if (d.toDateString() === yesterday.toDateString()) return 'вчера';
       return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
     }
 
     function escapeHtml(str) {
-      return (str || '').replace(/[&<>"']/g, s => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-      }[s]));
+      return (str || '').replace(/[&<>"']/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[s]));
     }
 
-    // ===== ОТКРЫТЬ ДИАЛОГ =====
+    // ===== ДИАЛОГ =====
     async function openDialog(chatId, silent = false) {
       currentChatId = chatId;
-
       const chat = chatsCache[chatId] || {};
       const color = getAvatarColor(chat.name);
-      const initial = getInitial(chat.name);
-
       dialogHeaderAvatar.style.background = color;
-      dialogHeaderAvatar.textContent = initial;
+      dialogHeaderAvatar.textContent = getInitial(chat.name);
       dialogTitle.textContent = chat.name || 'Чат';
       dialogSubtitle.textContent = chat.phone || '';
 
       try {
-        const res = await fetch(`/api/chats/${chatId}/messages`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const res = await fetch(`/api/chats/${chatId}/messages`, { headers: { 'Authorization': `Bearer ${token}` } });
         if (!res.ok) { if (res.status === 401) { logout(); return; } throw new Error('Ошибка'); }
         const messages = await res.json();
 
         messagesContainer.innerHTML = messages.map(msg => {
-          const sender = msg.sender;
-          const wrapperClass = sender === 'manager' ? 'manager' : (sender === 'bot' ? 'bot' : 'client');
+          const wrapperClass = msg.sender === 'manager' ? 'manager' : (msg.sender === 'bot' ? 'bot' : 'client');
           const time = new Date(msg.time).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-          let checks = '';
-          if (sender === 'manager') {
-            checks = `<span class="checkmarks">✓✓</span>`;
-          }
+          const checks = msg.sender === 'manager' ? '<span class="checkmarks">✓✓</span>' : '';
           return `
             <div class="message-wrapper ${wrapperClass}">
               <div class="message">${escapeHtml(msg.text)}</div>
@@ -505,13 +503,9 @@
             </div>
           `;
         }).join('');
-
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-        // Помечаем прочитанными
         await fetch(`/api/chats/${chatId}/read`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });
-
-        // Обновляем кеш
         if (chatsCache[chatId]) chatsCache[chatId].unread = 0;
         const item = document.querySelector(`.chat-item[data-chatid="${chatId}"]`);
         if (item) {
@@ -519,19 +513,15 @@
           const badge = item.querySelector('.chat-unread-badge');
           if (badge) badge.remove();
         }
-
         showDialogPanel();
       } catch (e) { console.error(e); }
     }
 
-    // ===== ПОКАЗ ПАНЕЛЕЙ (мобильный / ПК) =====
     function showDialogPanel() {
       if (window.innerWidth < 768) {
-        // На мобильном: скрываем список, показываем диалог
         document.getElementById('chats-panel').style.display = 'none';
         dialogPanel.style.display = 'flex';
       } else {
-        // На ПК: обе панели видны
         document.getElementById('chats-panel').style.display = 'flex';
         dialogPanel.style.display = 'flex';
       }
@@ -547,7 +537,6 @@
         document.getElementById('chats-panel').style.display = 'flex';
         dialogPanel.style.display = 'none';
       }
-      // Сброс выделения
       currentChatId = null;
       if (window.innerWidth >= 768) {
         dialogPanel.classList.add('empty');
@@ -560,7 +549,7 @@
 
     backBtn.addEventListener('click', showChatsList);
 
-    // ===== ОТПРАВКА СООБЩЕНИЯ =====
+    // ===== ОТПРАВКА =====
     sendReplyBtn.addEventListener('click', sendMessage);
     replyInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
 
@@ -585,37 +574,187 @@
         const res = await fetch('/api/rules', { headers: { 'Authorization': `Bearer ${token}` } });
         if (!res.ok) { if (res.status === 401) { logout(); return; } throw new Error('Ошибка'); }
         const rules = await res.json();
-        const tbody = document.getElementById('rules-body');
-        tbody.innerHTML = rules.map(rule => `
+        document.getElementById('rules-body').innerHTML = rules.map(rule => `
           <tr>
             <td>${escapeHtml(rule.keyword)}</td>
             <td>${escapeHtml(rule.response)}</td>
             <td>${rule.active ? '✅' : '❌'}</td>
-            <td class="actions">
-              <button onclick="deleteRule('${rule.id}')">🗑️</button>
-            </td>
+            <td class="actions"><button onclick="deleteRule('${rule.id}')">🗑️</button></td>
           </tr>
         `).join('');
       } catch (e) { console.error(e); }
     }
-
     document.getElementById('add-rule-btn').addEventListener('click', () => {
-      const keyword = prompt('Введите ключевое слово:');
-      if (!keyword) return;
-      const response = prompt('Введите ответ бота:');
-      if (!response) return;
+      const keyword = prompt('Введите ключевое слово:'); if (!keyword) return;
+      const response = prompt('Введите ответ бота:'); if (!response) return;
       fetch('/api/rules', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ keyword, response, active: true })
       }).then(() => loadRules());
     });
-
     window.deleteRule = async (id) => {
       if (!confirm('Удалить правило?')) return;
       await fetch(`/api/rules/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
       loadRules();
     };
+
+    // ===== КЛИЕНТЫ =====
+    async function loadClients() {
+      try {
+        const res = await fetch('/api/clients', { headers: { 'Authorization': `Bearer ${token}` } });
+        if (!res.ok) { if (res.status === 401) { logout(); return; } throw new Error('Ошибка'); }
+        clientsData = await res.json();
+        selectedClients.clear();
+        updateCityFilter();
+        renderClients();
+      } catch (e) { console.error(e); }
+    }
+
+    function updateCityFilter() {
+      const cities = [...new Set(clientsData.map(c => c.city).filter(Boolean))].sort();
+      const filter = document.getElementById('city-filter');
+      const currentValue = filter.value;
+      filter.innerHTML = '<option value="">Все города</option>' +
+        cities.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+      if (cities.includes(currentValue)) filter.value = currentValue;
+    }
+
+    function renderClients() {
+      const query = document.getElementById('client-search').value.toLowerCase().trim();
+      const cityFilter = document.getElementById('city-filter').value;
+
+      const filtered = clientsData.filter(c => {
+        if (cityFilter && c.city !== cityFilter) return false;
+        if (!query) return true;
+        return (c.name || '').toLowerCase().includes(query) || (c.phone || '').includes(query);
+      });
+
+      const tbody = document.getElementById('clients-body');
+      tbody.innerHTML = filtered.map(client => {
+        const color = getAvatarColor(client.name);
+        const initial = getInitial(client.name);
+        const checked = selectedClients.has(client.chatId) ? 'checked' : '';
+        const time = client.lastTime ? formatTime(client.lastTime) : '';
+        return `
+          <tr>
+            <td><input type="checkbox" class="client-checkbox" data-chatid="${client.chatId}" ${checked}></td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="chat-avatar" style="background:${color}; width:28px; height:28px; font-size:12px;">${initial}</div>
+                <span>${escapeHtml(client.name)}</span>
+              </div>
+            </td>
+            <td><input type="text" class="phone-input" data-chatid="${client.chatId}" value="${escapeHtml(client.phone)}" placeholder="—"></td>
+            <td><input type="text" class="city-input" data-chatid="${client.chatId}" value="${escapeHtml(client.city)}" placeholder="—"></td>
+            <td>${escapeHtml(client.source)}</td>
+            <td>${time}</td>
+          </tr>
+        `;
+      }).join('');
+
+      // Обработчики чекбоксов
+      document.querySelectorAll('.client-checkbox').forEach(cb => {
+        cb.addEventListener('change', () => {
+          if (cb.checked) selectedClients.add(cb.dataset.chatid);
+          else selectedClients.delete(cb.dataset.chatid);
+          updateBroadcastButton();
+        });
+      });
+
+      // Обработчики изменения города
+      document.querySelectorAll('.city-input').forEach(inp => {
+        inp.addEventListener('blur', async () => {
+          const chatId = inp.dataset.chatid;
+          const city = inp.value.trim();
+          const client = clientsData.find(c => String(c.chatId) === String(chatId));
+          if (client && client.city !== city) {
+            await fetch(`/api/clients/${chatId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+              body: JSON.stringify({ city })
+            });
+            client.city = city;
+            updateCityFilter();
+          }
+        });
+      });
+
+      // Обработчики изменения телефона
+      document.querySelectorAll('.phone-input').forEach(inp => {
+        inp.addEventListener('blur', async () => {
+          const chatId = inp.dataset.chatid;
+          const phone = inp.value.trim();
+          const client = clientsData.find(c => String(c.chatId) === String(chatId));
+          if (client && client.phone !== phone) {
+            await fetch(`/api/clients/${chatId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+              body: JSON.stringify({ phone })
+            });
+            client.phone = phone;
+          }
+        });
+      });
+
+      updateBroadcastButton();
+    }
+
+    // Поиск и фильтр
+    document.getElementById('client-search').addEventListener('input', renderClients);
+    document.getElementById('city-filter').addEventListener('change', renderClients);
+
+    // Кнопка «Выделить все»
+    document.getElementById('select-all-btn').addEventListener('click', () => {
+      const query = document.getElementById('client-search').value.toLowerCase().trim();
+      const cityFilter = document.getElementById('city-filter').value;
+
+      const visibleClients = clientsData.filter(c => {
+        if (cityFilter && c.city !== cityFilter) return false;
+        if (!query) return true;
+        return (c.name || '').toLowerCase().includes(query) || (c.phone || '').includes(query);
+      });
+
+      const allSelected = visibleClients.every(c => selectedClients.has(c.chatId));
+
+      if (allSelected) {
+        // Снять выделение со всех видимых
+        visibleClients.forEach(c => selectedClients.delete(c.chatId));
+        document.getElementById('select-all-btn').textContent = 'Выделить все';
+      } else {
+        visibleClients.forEach(c => selectedClients.add(c.chatId));
+        document.getElementById('select-all-btn').textContent = 'Снять выделение';
+      }
+      renderClients();
+    });
+
+    function updateBroadcastButton() {
+      const btn = document.getElementById('broadcast-btn');
+      if (selectedClients.size > 0) {
+        btn.classList.add('visible');
+        btn.textContent = `📤 Отправить рассылку (${selectedClients.size})`;
+      } else {
+        btn.classList.remove('visible');
+      }
+    }
+
+    // ===== МОДАЛКА РАССЫЛКИ (пока без отправки) =====
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    document.getElementById('broadcast-btn').addEventListener('click', () => {
+      document.getElementById('modal-count').textContent = selectedClients.size;
+      document.getElementById('broadcast-text').value = '';
+      document.getElementById('broadcast-progress').textContent = '';
+      modalBackdrop.classList.add('visible');
+    });
+    document.getElementById('modal-cancel').addEventListener('click', () => {
+      modalBackdrop.classList.remove('visible');
+    });
+    document.getElementById('modal-send').addEventListener('click', async () => {
+      const text = document.getElementById('broadcast-text').value.trim();
+      if (!text) return alert('Введите текст');
+      // TODO: отправить на /api/broadcast (следующий этап)
+      document.getElementById('broadcast-progress').textContent = '⚠️ Отправка будет реализована на следующем этапе';
+    });
 
     // ===== НАСТРОЙКИ =====
     async function loadSettings() {
@@ -626,21 +765,18 @@
         document.getElementById('bot-token-input').value = data.botToken || '';
       } catch (e) { console.error(e); }
     }
-
     document.getElementById('save-settings-btn').addEventListener('click', async () => {
       const botToken = document.getElementById('bot-token-input').value.trim();
       if (!botToken) return alert('Введите токен');
-      try {
-        await fetch('/api/settings', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ botToken })
-        });
-        document.getElementById('settings-message').textContent = 'Сохранено!';
-      } catch (e) { console.error(e); }
+      await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ botToken })
+      });
+      document.getElementById('settings-message').textContent = 'Сохранено!';
     });
 
-    // ===== РЕАКЦИЯ НА РЕСАЙЗ =====
+    // ===== РЕСАЙЗ =====
     window.addEventListener('resize', () => {
       if (window.innerWidth >= 768) {
         document.getElementById('chats-panel').style.display = 'flex';
