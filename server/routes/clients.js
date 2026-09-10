@@ -6,19 +6,20 @@ const { getSheetData, updateSheetData } = require('../sheets');
 // GET /api/clients
 router.get('/', auth, async (req, res) => {
   try {
-    const chats = await getSheetData('Chats!A:I');
+    const chats = await getSheetData('Chats!A:J');
     const validChats = chats.filter(row => row[0] && row[0].toString().trim() !== '');
 
     const clients = validChats.map(row => ({
       chatId: row[0],
-      name: row[1] || '',
+      name: row[1] || '',           // имя
       phone: row[2] || '',
       lastMessage: row[3] || '',
       lastTime: row[4] || '',
       lastSender: row[5] || 'client',
       city: row[6] || '',
       source: row[7] || 'Telegram',
-      username: row[8] || ''
+      username: row[8] || '',
+      lastName: row[9] || ''        // фамилия
     }));
 
     clients.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
@@ -34,20 +35,21 @@ router.get('/', auth, async (req, res) => {
 // PUT /api/clients/:chatId
 router.put('/:chatId', auth, async (req, res) => {
   const chatId = req.params.chatId;
-  const { name, phone, city, username } = req.body;
+  const { name, lastName, phone, city, username } = req.body;
 
   try {
-    const chats = await getSheetData('Chats!A:I');
+    const chats = await getSheetData('Chats!A:J');
     const rowIndex = chats.findIndex(row => row[0] && row[0].toString() === chatId.toString()) + 2;
 
     if (rowIndex < 2) {
       return res.status(404).json({ error: 'Клиент не найден' });
     }
 
-    if (name !== undefined) await updateSheetData(`Chats!B${rowIndex}:B${rowIndex}`, [[name]]);
-    if (phone !== undefined) await updateSheetData(`Chats!C${rowIndex}:C${rowIndex}`, [[phone]]);
-    if (city !== undefined) await updateSheetData(`Chats!G${rowIndex}:G${rowIndex}`, [[city]]);
-    if (username !== undefined) await updateSheetData(`Chats!I${rowIndex}:I${rowIndex}`, [[username]]);
+    if (name !== undefined)      await updateSheetData(`Chats!B${rowIndex}:B${rowIndex}`, [[name]]);
+    if (phone !== undefined)     await updateSheetData(`Chats!C${rowIndex}:C${rowIndex}`, [[phone]]);
+    if (city !== undefined)      await updateSheetData(`Chats!G${rowIndex}:G${rowIndex}`, [[city]]);
+    if (username !== undefined)  await updateSheetData(`Chats!I${rowIndex}:I${rowIndex}`, [[username]]);
+    if (lastName !== undefined)  await updateSheetData(`Chats!J${rowIndex}:J${rowIndex}`, [[lastName]]);
 
     res.json({ success: true });
   } catch (err) {
