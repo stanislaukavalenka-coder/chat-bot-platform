@@ -98,7 +98,7 @@
     .city-input:hover, .phone-input:hover { border-color: #e5e7eb; background: white; }
     .city-input:focus, .phone-input:focus { border-color: #3390ec; background: white; outline: none; }
 
-    #broadcast-btn { position: fixed; bottom: 80px; right: 20px; background: #3390ec; color: white; border: none; padding: 14px 24px; border-radius: 26px; cursor: pointer; font-size: 15px; font-weight: 600; box-shadow: 0 4px 12px rgba(51, 144, 236, 0.4); display: none; }
+    #broadcast-btn { position: fixed; bottom: 80px; right: 20px; background: #3390ec; color: white; border: none; padding: 14px 24px; border-radius: 26px; cursor: pointer; font-size: 15px; font-weight: 600; box-shadow: 0 4px 12px rgba(51, 144, 236, 0.4); display: none; z-index: 500; }
     #broadcast-btn.visible { display: block; }
     #broadcast-btn:hover { background: #2a7fd0; }
 
@@ -113,7 +113,8 @@
     #modal-actions button { padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; border: none; }
     #modal-cancel { background: #f0f2f5; color: #17212b; }
     #modal-send { background: #3390ec; color: white; }
-    #broadcast-progress { margin-top: 12px; font-size: 13px; color: #707d8f; }
+    #modal-send:disabled { opacity: 0.5; cursor: not-allowed; }
+    #broadcast-progress { margin-top: 12px; font-size: 13px; color: #707d8f; min-height: 18px; }
 
     /* ===== СЦЕНАРИИ / НАСТРОЙКИ ===== */
     #rules-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
@@ -653,7 +654,6 @@
         `;
       }).join('');
 
-      // Обработчики чекбоксов
       document.querySelectorAll('.client-checkbox').forEach(cb => {
         cb.addEventListener('change', () => {
           if (cb.checked) selectedClients.add(cb.dataset.chatid);
@@ -662,7 +662,6 @@
         });
       });
 
-      // Обработчики изменения города
       document.querySelectorAll('.city-input').forEach(inp => {
         inp.addEventListener('blur', async () => {
           const chatId = inp.dataset.chatid;
@@ -680,7 +679,6 @@
         });
       });
 
-      // Обработчики изменения телефона
       document.querySelectorAll('.phone-input').forEach(inp => {
         inp.addEventListener('blur', async () => {
           const chatId = inp.dataset.chatid;
@@ -700,11 +698,9 @@
       updateBroadcastButton();
     }
 
-    // Поиск и фильтр
     document.getElementById('client-search').addEventListener('input', renderClients);
     document.getElementById('city-filter').addEventListener('change', renderClients);
 
-    // Кнопка «Выделить все»
     document.getElementById('select-all-btn').addEventListener('click', () => {
       const query = document.getElementById('client-search').value.toLowerCase().trim();
       const cityFilter = document.getElementById('city-filter').value;
@@ -718,7 +714,6 @@
       const allSelected = visibleClients.every(c => selectedClients.has(c.chatId));
 
       if (allSelected) {
-        // Снять выделение со всех видимых
         visibleClients.forEach(c => selectedClients.delete(c.chatId));
         document.getElementById('select-all-btn').textContent = 'Выделить все';
       } else {
@@ -738,23 +733,104 @@
       }
     }
 
-    // ===== МОДАЛКА РАССЫЛКИ (пока без отправки) =====
+    // ===== МОДАЛКА РАССЫЛКИ (с реальной отправкой) =====
     const modalBackdrop = document.getElementById('modal-backdrop');
+    const broadcastText = document.getElementById('broadcast-text');
+    const broadcastProgress = document.getElementById('broadcast-progress');
+    const modalSendBtn = document.getElementById('modal-send');
+    const modalCancelBtn = document.getElementById('modal-cancel');
+
+    let pollingInterval = null;
+
     document.getElementById('broadcast-btn').addEventListener('click', () => {
       document.getElementById('modal-count').textContent = selectedClients.size;
-      document.getElementById('broadcast-text').value = '';
-      document.getElementById('broadcast-progress').textContent = '';
+      broadcastText.value = '';
+      broadcastProgress.textContent = '';
+      modalSendBtn.disabled = false;
+      modalSendBtn.textContent = 'Отправить';
+      modalSendBtn.onclick = sendBroadcast;
       modalBackdrop.classList.add('visible');
     });
-    document.getElementById('modal-cancel').addEventListener('click', () => {
+
+    modalCancelBtn.addEventListener('click', () => {
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+        pollingInterval = null;
+      }
       modalBackdrop.classList.remove('visible');
     });
-    document.getElementById('modal-send').addEventListener('click', async () => {
-      const text = document.getElementById('broadcast-text').value.trim();
+
+    async function sendBroadcast() {
+      const text = broadcastText.value.trim();
       if (!text) return alert('Введите текст');
-      // TODO: отправить на /api/broadcast (следующий этап)
-      document.getElementById('broadcast-progress').textContent = '⚠️ Отправка будет реализована на следующем этапе';
-    });
+
+      const chatIds = Array.from(selectedClients);
+      if (chatIds.length === 0) return alert('Не выбран ни один получатель');
+
+      modalSendBtn.disabled = true;
+      modalSendBtn.textContent = 'Отправка...';
+      broadcastProgress.textContent = '⏳ Запуск рассылки...';
+
+      try {
+        const res = await fetch('/api/broadcast', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ chatIds, text })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          broadcastProgress.textContent = '❌ Ошибка: ' + (data.error || 'не удалось запустить');
+          modalSendBtn.disabled = false;
+          modalSendBtn.textContent = 'Отправить';
+          return;
+        }
+
+        broadcastProgress.textContent = `⏳ Отправлено 0 из ${data.total}...`;
+
+        pollingInterval = setInterval(async () => {
+          try {
+            const sres = await fetch(`/api/broadcast/${data.broadcastId}/status`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const status = await sres.json();
+
+            broadcastProgress.textContent =
+              `📤 Отправлено: ${status.sent} из ${status.total}` +
+              (status.failed > 0 ? ` • Ошибок: ${status.failed}` : '');
+
+            if (status.status === 'completed' || status.status === 'failed') {
+              clearInterval(pollingInterval);
+              pollingInterval = null;
+
+              broadcastProgress.textContent =
+                `✅ Готово! Отправлено: ${status.sent} из ${status.total}` +
+                (status.failed > 0 ? ` • Ошибок: ${status.failed}` : '') +
+                (status.blocked > 0 ? ` • Заблокировали бота: ${status.blocked}` : '');
+
+              modalSendBtn.textContent = 'Закрыть';
+              modalSendBtn.disabled = false;
+              modalSendBtn.onclick = () => {
+                modalBackdrop.classList.remove('visible');
+                modalSendBtn.onclick = sendBroadcast;
+                modalSendBtn.textContent = 'Отправить';
+                selectedClients.clear();
+                updateBroadcastButton();
+                renderClients();
+              };
+            }
+          } catch (e) {
+            console.error('Ошибка опроса статуса:', e);
+          }
+        }, 1000);
+
+      } catch (e) {
+        console.error(e);
+        broadcastProgress.textContent = '❌ Сетевая ошибка';
+        modalSendBtn.disabled = false;
+        modalSendBtn.textContent = 'Отправить';
+      }
+    }
 
     // ===== НАСТРОЙКИ =====
     async function loadSettings() {
