@@ -2,7 +2,6 @@ const { google } = require('googleapis');
 const path = require('path');
 const fs = require('fs');
 
-// Определяем путь к credentials.json
 let keyFilePath;
 const localPath = path.join(__dirname, 'credentials.json');
 const renderPath = '/etc/secrets/credentials.json';
@@ -33,11 +32,9 @@ async function getSheetData(range) {
     range,
   });
   const values = res.data.values || [];
-  // Пропускаем первую строку с заголовками
   return values.slice(1);
 }
 
-// Запись данных
 async function appendSheetData(range, values) {
   await sheets.spreadsheets.values.append({
     spreadsheetId: SPREADSHEET_ID,
@@ -47,7 +44,6 @@ async function appendSheetData(range, values) {
   });
 }
 
-// Обновление диапазона
 async function updateSheetData(range, values) {
   await sheets.spreadsheets.values.update({
     spreadsheetId: SPREADSHEET_ID,
