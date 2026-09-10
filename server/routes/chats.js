@@ -4,11 +4,10 @@ const auth = require('../middleware/auth');
 const { getSheetData, appendSheetData, updateSheetData } = require('../sheets');
 const { bot } = require('../bot');
 
-// GET /api/chats – список всех чатов с непрочитанными
+// GET /api/chats – список чатов с сортировкой по времени
 router.get('/', auth, async (req, res) => {
   try {
-    const chats = await getSheetData('Chats!A:E');
-    // Фильтруем строки с пустым chat_id
+    const chats = await getSheetData('Chats!A:F');
     const validChats = chats.filter(row => row[0] && row[0].toString().trim() !== '');
     const messages = await getSheetData('Messages!A:F');
 
@@ -25,11 +24,21 @@ router.get('/', auth, async (req, res) => {
       phone: row[2] || '',
       lastMessage: row[3] || '',
       lastTime: row[4] || '',
+      lastSender: row[5] || 'client',
       unread: unreadCounts[row[0]] || 0
     }));
-res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-res.setHeader('Pragma', 'no-cache');
-res.setHeader('Expires', '0');
+
+    // Сортировка: свежие сверху
+    result.sort((a, b) => {
+      const tA = a.lastTime ? new Date(a.lastTime).getTime() : 0;
+      const tB = b.lastTime ? new Date(b.lastTime).getTime() : 0;
+      return tB - tA;
+    });
+
+    // Запрет кеширования
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     res.json(result);
   } catch (err) {
     console.error('Ошибка загрузки чатов:', err);
@@ -58,7 +67,7 @@ router.get('/:chatId/messages', auth, async (req, res) => {
   }
 });
 
-// POST /api/chats/message – отправить сообщение от менеджера
+// POST /api/chats/message – отправка сообщения от менеджера
 router.post('/message', auth, async (req, res) => {
   const { chatId, text } = req.body;
   if (!chatId || !text) {
@@ -66,22 +75,18 @@ router.post('/message', auth, async (req, res) => {
   }
 
   try {
-    // Сохраняем сообщение менеджера
     await appendSheetData('Messages!A:F', [
       [Date.now(), chatId, 'manager', text, new Date().toISOString(), 'TRUE']
     ]);
 
-    // Отправляем в Telegram
     await bot.api.sendMessage(chatId, text);
 
-    // Обновляем последнее сообщение в чате
-    const chats = await getSheetData('Chats!A:E');
-    const validChats = chats.filter(row => row[0] && row[0].toString().trim() !== '');
-    const chatRow = validChats.find(row => row[0].toString() === chatId.toString());
-    if (chatRow) {
-      const rowIndex = chats.indexOf(chatRow) + 2;
-      await updateSheetData(`Chats!D${rowIndex}:E${rowIndex}`, [
-        [text, new Date().toISOString()]
+    // Обновляем последнее сообщение в Chats как "manager"
+    const chats = await getSheetData('Chats!A:F');
+    const rowIndex = chats.findIndex(row => row[0] && row[0].toString() === chatId.toString()) + 2;
+    if (rowIndex >= 2) {
+      await updateSheetData(`Chats!D${rowIndex}:F${rowIndex}`, [
+        [text, new Date().toISOString(), 'manager']
       ]);
     }
 
@@ -92,7 +97,7 @@ router.post('/message', auth, async (req, res) => {
   }
 });
 
-// PUT /api/chats/:chatId/read – пометить все сообщения как прочитанные
+// PUT /api/chats/:chatId/read – пометить все сообщения прочитанными
 router.put('/:chatId/read', auth, async (req, res) => {
   const chatId = req.params.chatId;
   try {
