@@ -8,7 +8,7 @@ router.get('/', auth, async (req, res) => {
   try {
     const rules = await getSheetData('Rules!A:D');
     const result = rules
-      .filter(row => row[0] || row[1]) // хотя бы одно поле заполнено
+      .filter(row => row[0] || row[1])
       .map((row, idx) => ({
         id: row[3] || (idx + 1),
         keyword: row[0] || '',
@@ -31,7 +31,6 @@ router.post('/', auth, async (req, res) => {
 
   try {
     const rules = await getSheetData('Rules!A:D');
-    // Находим максимальный ID
     const ids = rules.map(row => parseInt(row[3]) || 0);
     const newId = Math.max(0, ...ids) + 1;
 
