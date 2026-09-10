@@ -4,10 +4,10 @@ const auth = require('../middleware/auth');
 const { getSheetData, appendSheetData, updateSheetData } = require('../sheets');
 const { bot } = require('../bot');
 
-// GET /api/chats – список чатов с сортировкой по времени
+// GET /api/chats
 router.get('/', auth, async (req, res) => {
   try {
-    const chats = await getSheetData('Chats!A:F');
+    const chats = await getSheetData('Chats!A:H');
     const validChats = chats.filter(row => row[0] && row[0].toString().trim() !== '');
     const messages = await getSheetData('Messages!A:F');
 
@@ -28,14 +28,12 @@ router.get('/', auth, async (req, res) => {
       unread: unreadCounts[row[0]] || 0
     }));
 
-    // Сортировка: свежие сверху
     result.sort((a, b) => {
       const tA = a.lastTime ? new Date(a.lastTime).getTime() : 0;
       const tB = b.lastTime ? new Date(b.lastTime).getTime() : 0;
       return tB - tA;
     });
 
-    // Запрет кеширования
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
@@ -46,7 +44,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// GET /api/chats/:chatId/messages – история сообщений
+// GET /api/chats/:chatId/messages
 router.get('/:chatId/messages', auth, async (req, res) => {
   try {
     const chatId = req.params.chatId;
@@ -67,7 +65,7 @@ router.get('/:chatId/messages', auth, async (req, res) => {
   }
 });
 
-// POST /api/chats/message – отправка сообщения от менеджера
+// POST /api/chats/message
 router.post('/message', auth, async (req, res) => {
   const { chatId, text } = req.body;
   if (!chatId || !text) {
@@ -81,8 +79,7 @@ router.post('/message', auth, async (req, res) => {
 
     await bot.api.sendMessage(chatId, text);
 
-    // Обновляем последнее сообщение в Chats как "manager"
-    const chats = await getSheetData('Chats!A:F');
+    const chats = await getSheetData('Chats!A:H');
     const rowIndex = chats.findIndex(row => row[0] && row[0].toString() === chatId.toString()) + 2;
     if (rowIndex >= 2) {
       await updateSheetData(`Chats!D${rowIndex}:F${rowIndex}`, [
@@ -97,7 +94,7 @@ router.post('/message', auth, async (req, res) => {
   }
 });
 
-// PUT /api/chats/:chatId/read – пометить все сообщения прочитанными
+// PUT /api/chats/:chatId/read
 router.put('/:chatId/read', auth, async (req, res) => {
   const chatId = req.params.chatId;
   try {
