@@ -51,7 +51,8 @@
     .chat-unread-badge { background: #3390ec; color: white; border-radius: 12px; min-width: 22px; height: 22px; padding: 0 7px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-left: 8px; }
 
     /* ===== ДИАЛОГ ===== */
-    #dialog-header { background: white; padding: 10px 16px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    #dialog-header { background: white; padding: 10px 16px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 12px; flex-shrink: 0; cursor: pointer; transition: background 0.15s; }
+    #dialog-header:hover { background: #f5f7fa; }
     #back-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #3390ec; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
     #dialog-header-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 16px; }
     #dialog-header-info { flex: 1; min-width: 0; }
@@ -92,7 +93,8 @@
     #clients-table { width: 100%; background: white; border-collapse: collapse; border-radius: 8px; overflow: hidden; }
     #clients-table th, #clients-table td { padding: 10px 12px; text-align: left; font-size: 14px; border-bottom: 1px solid #e5e7eb; }
     #clients-table th { background: #f5f7fa; font-weight: 600; font-size: 13px; color: #707d8f; }
-    #clients-table tr:hover { background: #f9fafb; }
+    #clients-table tbody tr { cursor: pointer; transition: background 0.1s; }
+    #clients-table tbody tr:hover { background: #f9fafb; }
     #clients-table td input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
     .city-input, .phone-input { border: 1px solid transparent; background: transparent; padding: 4px 6px; border-radius: 4px; font-size: 14px; font-family: inherit; width: 100%; }
     .city-input:hover, .phone-input:hover { border-color: #e5e7eb; background: white; }
@@ -102,19 +104,31 @@
     #broadcast-btn.visible { display: block; }
     #broadcast-btn:hover { background: #2a7fd0; }
 
-    /* ===== МОДАЛКА ===== */
-    #modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-    #modal-backdrop.visible { display: flex; }
-    #modal-content { background: white; border-radius: 12px; padding: 24px; max-width: 500px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-    #modal-content h3 { margin-bottom: 16px; font-size: 18px; }
-    #modal-content textarea { width: 100%; min-height: 120px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical; outline: none; }
-    #modal-content textarea:focus { border-color: #3390ec; }
-    #modal-actions { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
-    #modal-actions button { padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; border: none; }
-    #modal-cancel { background: #f0f2f5; color: #17212b; }
-    #modal-send { background: #3390ec; color: white; }
-    #modal-send:disabled { opacity: 0.5; cursor: not-allowed; }
+    /* ===== МОДАЛКИ ===== */
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+    .modal-backdrop.visible { display: flex; }
+    .modal-content { background: white; border-radius: 12px; padding: 24px; max-width: 500px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+    .modal-content h3 { margin-bottom: 16px; font-size: 18px; }
+    .modal-content textarea { width: 100%; min-height: 120px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical; outline: none; }
+    .modal-content textarea:focus { border-color: #3390ec; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
+    .modal-actions button { padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; border: none; }
+    .btn-cancel { background: #f0f2f5; color: #17212b; }
+    .btn-primary { background: #3390ec; color: white; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
     #broadcast-progress { margin-top: 12px; font-size: 13px; color: #707d8f; min-height: 18px; }
+
+    /* ===== КАРТОЧКА КЛИЕНТА ===== */
+    #client-modal .client-modal-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+    #client-modal .client-modal-avatar { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 26px; }
+    #client-modal .client-modal-name { font-size: 18px; font-weight: 600; color: #17212b; }
+    #client-modal .client-modal-sub { font-size: 13px; color: #8a9aa9; margin-top: 4px; }
+    #client-modal .form-row { margin-bottom: 12px; }
+    #client-modal .form-row label { display: block; font-size: 12px; color: #707d8f; margin-bottom: 4px; font-weight: 500; }
+    #client-modal .form-row input { width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; }
+    #client-modal .form-row input:focus { border-color: #3390ec; }
+    #client-modal .readonly-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #f0f2f5; color: #707d8f; }
+    #client-modal .readonly-row span:last-child { color: #17212b; font-family: monospace; }
 
     /* ===== СЦЕНАРИИ / НАСТРОЙКИ ===== */
     #rules-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
@@ -150,7 +164,6 @@
   </style>
 </head>
 <body>
-  <!-- ЛОГИН -->
   <div id="login-screen">
     <h2>Вход в админку</h2>
     <input type="password" id="password-input" placeholder="Пароль" />
@@ -158,7 +171,6 @@
     <div id="login-error">Неверный пароль</div>
   </div>
 
-  <!-- ГЛАВНОЕ ПРИЛОЖЕНИЕ -->
   <div id="main-app">
     <nav id="navbar">
       <button class="nav-btn active" data-section="chats"><span class="icon">💬</span><span>Чаты</span></button>
@@ -168,7 +180,6 @@
     </nav>
 
     <div id="content">
-      <!-- ЧАТЫ -->
       <div id="section-chats" style="display: flex; flex: 1; overflow: hidden;">
         <div id="chats-panel">
           <div id="chats-header"><h2>Чаты</h2></div>
@@ -192,7 +203,6 @@
         </div>
       </div>
 
-      <!-- СЦЕНАРИИ -->
       <section id="section-rules" class="page-section">
         <h2>Автоответы</h2>
         <button id="add-rule-btn">+ Добавить правило</button>
@@ -202,7 +212,6 @@
         </table>
       </section>
 
-      <!-- КЛИЕНТЫ -->
       <section id="section-clients" class="page-section">
         <h2>Клиенты</h2>
         <div id="clients-toolbar">
@@ -226,7 +235,6 @@
         <button id="broadcast-btn">📤 Отправить рассылку</button>
       </section>
 
-      <!-- НАСТРОЙКИ -->
       <section id="section-settings" class="page-section">
         <h2>Настройки бота</h2>
         <div id="settings-form">
@@ -240,15 +248,53 @@
   </div>
 
   <!-- МОДАЛКА РАССЫЛКИ -->
-  <div id="modal-backdrop">
-    <div id="modal-content">
+  <div id="modal-backdrop" class="modal-backdrop">
+    <div class="modal-content">
       <h3>Новая рассылка</h3>
       <p style="font-size: 13px; color: #707d8f; margin-bottom: 12px;">Получателей: <span id="modal-count">0</span></p>
       <textarea id="broadcast-text" placeholder="Введите текст сообщения..."></textarea>
       <div id="broadcast-progress"></div>
-      <div id="modal-actions">
-        <button id="modal-cancel">Отмена</button>
-        <button id="modal-send">Отправить</button>
+      <div class="modal-actions">
+        <button id="modal-cancel" class="btn-cancel">Отмена</button>
+        <button id="modal-send" class="btn-primary">Отправить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛКА КАРТОЧКИ КЛИЕНТА -->
+  <div id="client-modal" class="modal-backdrop">
+    <div class="modal-content">
+      <div class="client-modal-header">
+        <div class="client-modal-avatar" id="cm-avatar"></div>
+        <div>
+          <div class="client-modal-name" id="cm-title">Клиент</div>
+          <div class="client-modal-sub" id="cm-source">Telegram</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Имя</label>
+        <input type="text" id="cm-name" placeholder="Имя" />
+      </div>
+      <div class="form-row">
+        <label>Логин (без @)</label>
+        <input type="text" id="cm-username" placeholder="username" />
+      </div>
+      <div class="form-row">
+        <label>Телефон</label>
+        <input type="text" id="cm-phone" placeholder="+375..." />
+      </div>
+      <div class="form-row">
+        <label>Город</label>
+        <input type="text" id="cm-city" placeholder="Город" />
+      </div>
+
+      <div class="readonly-row"><span>Chat ID</span><span id="cm-chatid">—</span></div>
+      <div class="readonly-row"><span>Источник</span><span id="cm-source-2">—</span></div>
+
+      <div class="modal-actions">
+        <button id="cm-close" class="btn-cancel">Закрыть</button>
+        <button id="cm-save" class="btn-primary">Сохранить</button>
       </div>
     </div>
   </div>
@@ -261,6 +307,7 @@
     let chatsCache = {};
     let clientsData = [];
     let selectedClients = new Set();
+    let currentClientModal = null; // chatId клиента в модалке
 
     // ===== DOM =====
     const loginScreen = document.getElementById('login-screen');
@@ -297,7 +344,7 @@
     }
     function getInitial(name) { return (name || 'К').trim().charAt(0).toUpperCase(); }
 
-    // ===== ВЫХОД =====
+    // ===== ВЫХОД / АВТО-ВХОД / ЛОГИН =====
     function logout() {
       localStorage.removeItem('chatBotToken');
       token = null;
@@ -305,8 +352,6 @@
       mainApp.classList.remove('visible');
       if (unreadInterval) clearInterval(unreadInterval);
     }
-
-    // ===== АВТО-ВХОД =====
     async function autoLogin() {
       const savedToken = localStorage.getItem('chatBotToken');
       if (!savedToken) return false;
@@ -321,8 +366,6 @@
         } else { logout(); return false; }
       } catch (e) { logout(); return false; }
     }
-
-    // ===== ЛОГИН =====
     loginBtn.addEventListener('click', async () => {
       const password = passwordInput.value;
       try {
@@ -415,7 +458,7 @@
       } catch (err) { console.error('Ошибка push:', err); }
     }
 
-    // ===== ЗАГРУЗКА ЧАТОВ =====
+    // ===== ЧАТЫ =====
     async function loadChats() {
       try {
         const res = await fetch('/api/chats', { headers: { 'Authorization': `Bearer ${token}` } });
@@ -462,7 +505,6 @@
       if (sender === 'bot') return '<span class="sender-prefix">Бот: </span>';
       return '';
     }
-
     function formatTime(iso) {
       if (!iso) return '';
       const d = new Date(iso);
@@ -473,7 +515,6 @@
       if (d.toDateString() === yesterday.toDateString()) return 'вчера';
       return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
     }
-
     function escapeHtml(str) {
       return (str || '').replace(/[&<>"']/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[s]));
     }
@@ -532,7 +573,6 @@
       emptyState.style.display = 'none';
       dialogPanel.classList.remove('empty');
     }
-
     function showChatsList() {
       if (window.innerWidth < 768) {
         document.getElementById('chats-panel').style.display = 'flex';
@@ -547,13 +587,28 @@
         emptyState.style.display = 'flex';
       }
     }
+    backBtn.addEventListener('click', (e) => { e.stopPropagation(); showChatsList(); });
 
-    backBtn.addEventListener('click', showChatsList);
+    // ===== КЛИК ПО ШАПКЕ ДИАЛОГА =====
+    dialogHeader.addEventListener('click', () => {
+      if (!currentChatId) return;
+      const chat = chatsCache[currentChatId];
+      if (!chat) return;
+      // Формируем объект-клиент из данных чата
+      const client = {
+        chatId: chat.chatId,
+        name: chat.name || '',
+        phone: chat.phone || '',
+        city: chat.city || '',
+        username: chat.username || '',
+        source: chat.source || 'Telegram'
+      };
+      openClientModal(client);
+    });
 
     // ===== ОТПРАВКА =====
     sendReplyBtn.addEventListener('click', sendMessage);
     replyInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
-
     async function sendMessage() {
       const text = replyInput.value.trim();
       if (!text || !currentChatId) return;
@@ -638,21 +693,30 @@
         const checked = selectedClients.has(client.chatId) ? 'checked' : '';
         const time = client.lastTime ? formatTime(client.lastTime) : '';
         return `
-          <tr>
-            <td><input type="checkbox" class="client-checkbox" data-chatid="${client.chatId}" ${checked}></td>
+          <tr class="client-row" data-chatid="${client.chatId}">
+            <td onclick="event.stopPropagation()"><input type="checkbox" class="client-checkbox" data-chatid="${client.chatId}" ${checked}></td>
             <td>
               <div style="display:flex; align-items:center; gap:8px;">
                 <div class="chat-avatar" style="background:${color}; width:28px; height:28px; font-size:12px;">${initial}</div>
                 <span>${escapeHtml(client.name)}</span>
               </div>
             </td>
-            <td><input type="text" class="phone-input" data-chatid="${client.chatId}" value="${escapeHtml(client.phone)}" placeholder="—"></td>
-            <td><input type="text" class="city-input" data-chatid="${client.chatId}" value="${escapeHtml(client.city)}" placeholder="—"></td>
+            <td onclick="event.stopPropagation()"><input type="text" class="phone-input" data-chatid="${client.chatId}" value="${escapeHtml(client.phone)}" placeholder="—"></td>
+            <td onclick="event.stopPropagation()"><input type="text" class="city-input" data-chatid="${client.chatId}" value="${escapeHtml(client.city)}" placeholder="—"></td>
             <td>${escapeHtml(client.source)}</td>
             <td>${time}</td>
           </tr>
         `;
       }).join('');
+
+      // Клик по строке (не по input)
+      document.querySelectorAll('.client-row').forEach(row => {
+        row.addEventListener('click', () => {
+          const chatId = row.dataset.chatid;
+          const client = clientsData.find(c => String(c.chatId) === String(chatId));
+          if (client) openClientModal(client);
+        });
+      });
 
       document.querySelectorAll('.client-checkbox').forEach(cb => {
         cb.addEventListener('change', () => {
@@ -733,13 +797,103 @@
       }
     }
 
-    // ===== МОДАЛКА РАССЫЛКИ (с реальной отправкой) =====
+    // ===== МОДАЛКА КАРТОЧКИ КЛИЕНТА =====
+    const clientModal = document.getElementById('client-modal');
+    const cmAvatar = document.getElementById('cm-avatar');
+    const cmTitle = document.getElementById('cm-title');
+    const cmSourceTop = document.getElementById('cm-source');
+    const cmName = document.getElementById('cm-name');
+    const cmUsername = document.getElementById('cm-username');
+    const cmPhone = document.getElementById('cm-phone');
+    const cmCity = document.getElementById('cm-city');
+    const cmChatId = document.getElementById('cm-chatid');
+    const cmSource2 = document.getElementById('cm-source-2');
+
+    function openClientModal(client) {
+      currentClientModal = client.chatId;
+      const color = getAvatarColor(client.name);
+      cmAvatar.style.background = color;
+      cmAvatar.textContent = getInitial(client.name);
+      cmTitle.textContent = client.name || 'Клиент';
+      cmSourceTop.textContent = client.source || 'Telegram';
+
+      cmName.value = client.name || '';
+      cmUsername.value = client.username || '';
+      cmPhone.value = client.phone || '';
+      cmCity.value = client.city || '';
+      cmChatId.textContent = client.chatId || '—';
+      cmSource2.textContent = client.source || 'Telegram';
+
+      clientModal.classList.add('visible');
+    }
+
+    document.getElementById('cm-close').addEventListener('click', () => {
+      clientModal.classList.remove('visible');
+      currentClientModal = null;
+    });
+
+    document.getElementById('cm-save').addEventListener('click', async () => {
+      if (!currentClientModal) return;
+      const name = cmName.value.trim();
+      const username = cmUsername.value.trim().replace(/^@/, '');
+      const phone = cmPhone.value.trim();
+      const city = cmCity.value.trim();
+
+      try {
+        const res = await fetch(`/api/clients/${currentClientModal}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ name, username, phone, city })
+        });
+        if (!res.ok) throw new Error('Ошибка сохранения');
+
+        // Обновляем локальные данные
+        const client = clientsData.find(c => String(c.chatId) === String(currentClientModal));
+        if (client) {
+          client.name = name;
+          client.username = username;
+          client.phone = phone;
+          client.city = city;
+        }
+        // Обновляем кеш чатов
+        if (chatsCache[currentClientModal]) {
+          chatsCache[currentClientModal].name = name;
+          chatsCache[currentClientModal].phone = phone;
+          chatsCache[currentClientModal].city = city;
+          chatsCache[currentClientModal].username = username;
+        }
+        // Обновляем шапку диалога, если открыт этот чат
+        if (currentChatId === currentClientModal) {
+          const color = getAvatarColor(name);
+          dialogHeaderAvatar.style.background = color;
+          dialogHeaderAvatar.textContent = getInitial(name);
+          dialogTitle.textContent = name;
+          dialogSubtitle.textContent = phone || '';
+        }
+
+        clientModal.classList.remove('visible');
+        currentClientModal = null;
+
+        // Обновляем интерфейс
+        if (document.querySelector('[data-section="clients"]').classList.contains('active')) {
+          updateCityFilter();
+          renderClients();
+        }
+        if (document.querySelector('[data-section="chats"]').classList.contains('active')) {
+          loadChats();
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Не удалось сохранить');
+      }
+    });
+
+    // ===== МОДАЛКА РАССЫЛКИ =====
     const modalBackdrop = document.getElementById('modal-backdrop');
     const broadcastText = document.getElementById('broadcast-text');
     const broadcastProgress = document.getElementById('broadcast-progress');
     const modalSendBtn = document.getElementById('modal-send');
     const modalCancelBtn = document.getElementById('modal-cancel');
-
     let pollingInterval = null;
 
     document.getElementById('broadcast-btn').addEventListener('click', () => {
@@ -751,19 +905,14 @@
       modalSendBtn.onclick = sendBroadcast;
       modalBackdrop.classList.add('visible');
     });
-
     modalCancelBtn.addEventListener('click', () => {
-      if (pollingInterval) {
-        clearInterval(pollingInterval);
-        pollingInterval = null;
-      }
+      if (pollingInterval) { clearInterval(pollingInterval); pollingInterval = null; }
       modalBackdrop.classList.remove('visible');
     });
 
     async function sendBroadcast() {
       const text = broadcastText.value.trim();
       if (!text) return alert('Введите текст');
-
       const chatIds = Array.from(selectedClients);
       if (chatIds.length === 0) return alert('Не выбран ни один получатель');
 
@@ -785,7 +934,6 @@
           modalSendBtn.textContent = 'Отправить';
           return;
         }
-
         broadcastProgress.textContent = `⏳ Отправлено 0 из ${data.total}...`;
 
         pollingInterval = setInterval(async () => {
@@ -794,7 +942,6 @@
               headers: { 'Authorization': `Bearer ${token}` }
             });
             const status = await sres.json();
-
             broadcastProgress.textContent =
               `📤 Отправлено: ${status.sent} из ${status.total}` +
               (status.failed > 0 ? ` • Ошибок: ${status.failed}` : '');
@@ -802,12 +949,10 @@
             if (status.status === 'completed' || status.status === 'failed') {
               clearInterval(pollingInterval);
               pollingInterval = null;
-
               broadcastProgress.textContent =
                 `✅ Готово! Отправлено: ${status.sent} из ${status.total}` +
                 (status.failed > 0 ? ` • Ошибок: ${status.failed}` : '') +
                 (status.blocked > 0 ? ` • Заблокировали бота: ${status.blocked}` : '');
-
               modalSendBtn.textContent = 'Закрыть';
               modalSendBtn.disabled = false;
               modalSendBtn.onclick = () => {
@@ -819,11 +964,8 @@
                 renderClients();
               };
             }
-          } catch (e) {
-            console.error('Ошибка опроса статуса:', e);
-          }
+          } catch (e) { console.error('Ошибка опроса статуса:', e); }
         }, 1000);
-
       } catch (e) {
         console.error(e);
         broadcastProgress.textContent = '❌ Сетевая ошибка';
