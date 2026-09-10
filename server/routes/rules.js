@@ -3,16 +3,18 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const { getSheetData, appendSheetData, updateSheetData } = require('../sheets');
 
-// GET /api/rules – все правила
+// GET /api/rules
 router.get('/', auth, async (req, res) => {
   try {
-    const rules = await getSheetData('Rules!A:D'); // keyword, response, active, id
-    const result = rules.map((row, idx) => ({
-      id: row[3] || (idx + 1),
-      keyword: row[0] || '',
-      response: row[1] || '',
-      active: row[2] === 'TRUE'
-    }));
+    const rules = await getSheetData('Rules!A:D');
+    const result = rules
+      .filter(row => row[0] || row[1]) // хотя бы одно поле заполнено
+      .map((row, idx) => ({
+        id: row[3] || (idx + 1),
+        keyword: row[0] || '',
+        response: row[1] || '',
+        active: row[2] === 'TRUE'
+      }));
     res.json(result);
   } catch (err) {
     console.error(err);
@@ -20,7 +22,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// POST /api/rules – создать правило
+// POST /api/rules
 router.post('/', auth, async (req, res) => {
   const { keyword, response, active } = req.body;
   if (!keyword || !response) {
@@ -29,7 +31,10 @@ router.post('/', auth, async (req, res) => {
 
   try {
     const rules = await getSheetData('Rules!A:D');
-    const newId = rules.length + 1;
+    // Находим максимальный ID
+    const ids = rules.map(row => parseInt(row[3]) || 0);
+    const newId = Math.max(0, ...ids) + 1;
+
     await appendSheetData('Rules!A:D', [
       [keyword, response, active ? 'TRUE' : 'FALSE', newId]
     ]);
@@ -40,7 +45,7 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// PUT /api/rules/:id – обновить правило
+// PUT /api/rules/:id
 router.put('/:id', auth, async (req, res) => {
   const id = req.params.id;
   const { keyword, response, active } = req.body;
@@ -60,7 +65,7 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-// DELETE /api/rules/:id – удалить правило (очистить строку)
+// DELETE /api/rules/:id
 router.delete('/:id', auth, async (req, res) => {
   const id = req.params.id;
   try {
@@ -69,7 +74,6 @@ router.delete('/:id', auth, async (req, res) => {
     if (rowIndex < 2) {
       return res.status(404).json({ error: 'Правило не найдено' });
     }
-    // Очищаем ячейки (можно также удалить строку, но это сложнее)
     await updateSheetData(`Rules!A${rowIndex}:D${rowIndex}`, [['', '', '', '']]);
     res.json({ success: true });
   } catch (err) {
