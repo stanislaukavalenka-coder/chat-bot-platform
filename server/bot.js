@@ -41,7 +41,7 @@ async function sendPushToSubscribers(title, body, url) {
 
 // ---------- ОБНОВЛЕНИЕ ПОСЛЕДНЕГО СООБЩЕНИЯ ----------
 async function updateChatLastMessage(userId, text, sender) {
-  const chats = await getSheetData('Chats!A:I');
+  const chats = await getSheetData('Chats!A:J');
   const rowIndex = chats.findIndex(row => row[0] && row[0].toString() === userId.toString()) + 2;
   if (rowIndex >= 2) {
     await updateSheetData(`Chats!D${rowIndex}:F${rowIndex}`, [
@@ -55,18 +55,18 @@ bot.on('message:text', async (ctx) => {
   const userId = ctx.from.id;
   const text = ctx.message.text;
   const firstName = ctx.from.first_name || '';
+  const lastName = ctx.from.last_name || '';
   const username = ctx.from.username || '';
-  const displayName = firstName || username || 'Клиент';
-  const userName = displayName;
+  const displayName = [firstName, lastName].filter(Boolean).join(' ') || username || 'Клиент';
 
-  const chats = await getSheetData('Chats!A:I');
+  const chats = await getSheetData('Chats!A:J');
   const validChats = chats.filter(row => row[0] && row[0].toString().trim() !== '');
   const chatRow = validChats.find(row => row[0].toString() === userId.toString());
 
   if (!chatRow) {
-    // Новый пользователь
-    await appendSheetData('Chats!A:I', [
-      [userId, displayName, '', text, new Date().toISOString(), 'client', '', 'Telegram', username]
+    // Новый пользователь: B=имя, J=фамилия
+    await appendSheetData('Chats!A:J', [
+      [userId, firstName || username || 'Клиент', '', text, new Date().toISOString(), 'client', '', 'Telegram', username, lastName]
     ]);
 
     await ctx.reply(
@@ -101,7 +101,7 @@ bot.on('message:text', async (ctx) => {
   }
 
   await sendPushToSubscribers(
-    `📩 Новое сообщение от ${userName}`,
+    `📩 Новое сообщение от ${displayName}`,
     text,
     'https://chat-bot-platform-8mge.onrender.com/'
   );
@@ -112,7 +112,7 @@ bot.on('message:contact', async (ctx) => {
   const userId = ctx.from.id;
   const phone = ctx.message.contact.phone_number;
 
-  const chats = await getSheetData('Chats!A:I');
+  const chats = await getSheetData('Chats!A:J');
   const rowIndex = chats.findIndex(row => row[0] && row[0].toString() === userId.toString()) + 2;
 
   if (rowIndex >= 2) {
@@ -122,10 +122,11 @@ bot.on('message:contact', async (ctx) => {
     });
   } else {
     const firstName = ctx.from.first_name || '';
+    const lastName = ctx.from.last_name || '';
     const username = ctx.from.username || '';
-    const displayName = firstName || username || 'Клиент';
-    await appendSheetData('Chats!A:I', [
-      [userId, displayName, phone, 'Поделился контактом', new Date().toISOString(), 'client', '', 'Telegram', username]
+    const displayName = [firstName, lastName].filter(Boolean).join(' ') || username || 'Клиент';
+    await appendSheetData('Chats!A:J', [
+      [userId, firstName || username || 'Клиент', phone, 'Поделился контактом', new Date().toISOString(), 'client', '', 'Telegram', username, lastName]
     ]);
     await ctx.reply('Спасибо! Номер сохранён.', {
       reply_markup: { remove_keyboard: true }
