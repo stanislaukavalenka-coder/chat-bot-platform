@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const { getSheetData, appendSheetData, updateSheetData } = require('../sheets');
 
+// GET /api/settings
 router.get('/', auth, async (req, res) => {
   try {
     const settings = await getSheetData('Settings!A:B');
@@ -15,6 +16,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// PUT /api/settings
 router.put('/', auth, async (req, res) => {
   const { botToken } = req.body;
   if (!botToken) {
