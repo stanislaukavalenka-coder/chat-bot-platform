@@ -7,7 +7,7 @@ const { bot } = require('../bot');
 // GET /api/chats
 router.get('/', auth, async (req, res) => {
   try {
-    const chats = await getSheetData('Chats!A:H');
+    const chats = await getSheetData('Chats!A:J');
     const validChats = chats.filter(row => row[0] && row[0].toString().trim() !== '');
     const messages = await getSheetData('Messages!A:F');
 
@@ -18,15 +18,25 @@ router.get('/', auth, async (req, res) => {
       }
     });
 
-    const result = validChats.map(row => ({
-      chatId: row[0],
-      name: row[1] || 'Клиент',
-      phone: row[2] || '',
-      lastMessage: row[3] || '',
-      lastTime: row[4] || '',
-      lastSender: row[5] || 'client',
-      unread: unreadCounts[row[0]] || 0
-    }));
+    const result = validChats.map(row => {
+      const firstName = row[1] || '';
+      const lastName = row[9] || '';
+      const displayName = [firstName, lastName].filter(Boolean).join(' ') || 'Клиент';
+      return {
+        chatId: row[0],
+        name: firstName,          // имя
+        lastName: lastName,       // фамилия
+        displayName: displayName, // полное имя для отображения
+        phone: row[2] || '',
+        lastMessage: row[3] || '',
+        lastTime: row[4] || '',
+        lastSender: row[5] || 'client',
+        city: row[6] || '',
+        source: row[7] || 'Telegram',
+        username: row[8] || '',
+        unread: unreadCounts[row[0]] || 0
+      };
+    });
 
     result.sort((a, b) => {
       const tA = a.lastTime ? new Date(a.lastTime).getTime() : 0;
@@ -35,8 +45,6 @@ router.get('/', auth, async (req, res) => {
     });
 
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
     res.json(result);
   } catch (err) {
     console.error('Ошибка загрузки чатов:', err);
@@ -79,7 +87,7 @@ router.post('/message', auth, async (req, res) => {
 
     await bot.api.sendMessage(chatId, text);
 
-    const chats = await getSheetData('Chats!A:H');
+    const chats = await getSheetData('Chats!A:J');
     const rowIndex = chats.findIndex(row => row[0] && row[0].toString() === chatId.toString()) + 2;
     if (rowIndex >= 2) {
       await updateSheetData(`Chats!D${rowIndex}:F${rowIndex}`, [
