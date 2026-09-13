@@ -1193,10 +1193,13 @@
     }
 
     function renderPerms(perms) {
-      mmPerms.innerHTML = ALL_PERMISSIONS.map(p => `
-        <label><input type="checkbox" data-perm="${p}" ${perms[p] ? 'checked' : ''} /> ${PERMISSION_LABELS[p]}</label>
-      `).join('');
-    }
+  mmPerms.innerHTML = ALL_PERMISSIONS.map(p => `
+    <label>
+      <input type="checkbox" data-perm="${p}" ${perms[p] ? 'checked' : ''} />
+      <span>${PERMISSION_LABELS[p]}</span>
+    </label>
+  `).join('');
+}
     function getPermsFromUI() {
       const out = {};
       mmPerms.querySelectorAll('input[data-perm]').forEach(cb => { out[cb.dataset.perm] = cb.checked; });
