@@ -11,34 +11,51 @@ webPush.setVapidDetails(
 const bot = new Bot(process.env.BOT_TOKEN);
 
 // ---------- PUSH ----------
-async function sendPushToSubscribers(title, body, url) {
+router.post('/subscribe', auth, async (req, res) => {
+  const subscription = req.body;
+  const userId = req.user.id || 'admin';
+  if (!subscription || !subscription.endpoint) {
+    return res.status(400).json({ error: 'Неверные данные подписки' });
+  }
   try {
     const data = await getSheetData('PushSubscriptions!A:B');
-    const subscriptions = data
-      .filter(row => row[0] && row[0].trim() !== '' && row[0].trim() !== 'subscription')
-      .map(row => {
-        try { return JSON.parse(row[0]); } catch { return null; }
-      })
-      .filter(sub => sub !== null && sub.endpoint);
 
-    if (subscriptions.length === 0) return;
-
-    const payload = JSON.stringify({ title, body, url: url || '/' });
-    const options = { TTL: 60 };
-
-    for (const subscription of subscriptions) {
-      try {
-        await webPush.sendNotification(subscription, payload, options);
-        console.log('Push уведомление отправлено');
-      } catch (err) {
-        console.error('Ошибка отправки push:', err.message);
+    // Ищем ВСЕ строки с этим userId
+    const userRows = [];
+    data.forEach((row, idx) => {
+      if (row[1] === userId) {
+        userRows.push({ idx, subJson: row[0], endpoint: (() => {
+          try { return JSON.parse(row[0]).endpoint; } catch { return null; }
+        })() });
       }
-    }
-  } catch (err) {
-    console.error('Ошибка получения подписок для push:', err);
-  }
-}
+    });
 
+    // Проверяем, есть ли уже подписка с таким же endpoint
+    const sameEndpoint = userRows.find(r => r.endpoint === subscription.endpoint);
+
+    if (sameEndpoint) {
+      // Обновляем только эту строку
+      const rowNum = sameEndpoint.idx + 2;
+      await updateSheetData(`PushSubscriptions!A${rowNum}:B${rowNum}`, [
+        [JSON.stringify(subscription), userId]
+      ]);
+    } else {
+      // Удаляем все старые подписки этого userId и добавляем новую
+      for (const r of userRows) {
+        const rowNum = r.idx + 2;
+        await updateSheetData(`PushSubscriptions!A${rowNum}:B${rowNum}`, [['', '']]);
+      }
+      await appendSheetData('PushSubscriptions!A:B', [
+        [JSON.stringify(subscription), userId]
+      ]);
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Ошибка сохранения подписки' });
+  }
+});
 // ---------- ОБНОВЛЕНИЕ ПОСЛЕДНЕГО СООБЩЕНИЯ ----------
 async function updateChatLastMessage(userId, text, sender) {
   const chats = await getSheetData('Chats!A:J');
