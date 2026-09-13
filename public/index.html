@@ -362,9 +362,7 @@
     border-radius: 10px;
   }
   .modal-content h3 { font-size: 16px; }
-  .modal-actions {
-    flex-wrap: wrap;
-  }
+  .modal-actions { flex-wrap: wrap; }
   .modal-actions button {
     flex: 1;
     min-width: 100px;
@@ -375,6 +373,15 @@
     flex-basis: 100%;
     order: 10;
     margin-right: 0 !important;
+  }
+  /* Уменьшаем отступы в списке прав на мобильном */
+  .modal-content .perm-list {
+    padding: 6px 10px;
+    max-height: 220px;
+  }
+  .modal-content .perm-list label {
+    padding: 7px 0;
+    font-size: 13px;
   }
 }
     /* ===== SPINNER ===== */
