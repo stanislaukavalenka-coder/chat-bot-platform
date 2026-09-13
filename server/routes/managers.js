@@ -5,13 +5,12 @@ const authMw = require('../middleware/auth');
 const { getSheetData, appendSheetData, updateSheetData } = require('../sheets');
 const { parsePermissions, serializePermissions, ROLE_PRESETS } = require('../permissions');
 const { generatePassword, isValidEmail, normalizeEmail } = require('../utils/generate');
-const { sendInvite } = require('../email');
 
-// Все роуты — только для админа (кроме /me, он в auth.js)
+// Все роуты — только для админа
 router.use(authMw);
 router.use(authMw.requireAdmin);
 
-// ---------- GET /api/managers — список ----------
+// ---------- GET /api/managers ----------
 router.get('/', async (req, res) => {
   try {
     const managers = await getSheetData('Managers!A:J');
@@ -36,7 +35,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ---------- POST /api/managers — создать менеджера ----------
+// ---------- POST /api/managers — создать ----------
 router.post('/', async (req, res) => {
   const { firstName, lastName, email, role, permissions } = req.body;
 
@@ -53,17 +52,14 @@ router.post('/', async (req, res) => {
 
   try {
     const managers = await getSheetData('Managers!A:J');
-    // Проверка на уникальность email
     const existing = managers.find(row => row[3] && row[3].toString().toLowerCase() === normalizedEmail);
     if (existing) {
       return res.status(409).json({ error: 'Email уже используется' });
     }
 
-    // Генерируем пароль
     const password = generatePassword(10);
     const hash = await bcrypt.hash(password, 10);
 
-    // Новый id
     const ids = managers.map(row => parseInt(row[0]) || 0);
     const newId = Math.max(0, ...ids) + 1;
 
@@ -82,30 +78,11 @@ router.post('/', async (req, res) => {
       ],
     ]);
 
-    // Отправляем приглашение
-    let emailSent = true;
-    let emailError = '';
-    try {
-      await sendInvite({
-        email: normalizedEmail,
-        firstName,
-        password,
-        botName: process.env.BOT_NAME || 'Чат-бот',
-        appUrl: process.env.APP_URL || 'https://chat-bot-platform-8mge.onrender.com',
-      });
-    } catch (mailErr) {
-      console.error('Ошибка отправки приглашения:', mailErr);
-      emailSent = false;
-      emailError = mailErr.message;
-    }
-
+    // Возвращаем пароль в ответе — админ скопирует и передаст вручную
     res.json({
       success: true,
       id: newId,
-      emailSent,
-      emailError,
-      // В ответе возвращаем пароль, чтобы админ мог сообщить его вручную, если письмо не ушло
-      tempPassword: emailSent ? undefined : password,
+      tempPassword: password,
     });
   } catch (err) {
     console.error(err);
@@ -113,7 +90,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ---------- PUT /api/managers/:id — обновить данные ----------
+// ---------- PUT /api/managers/:id — обновить ----------
 router.put('/:id', async (req, res) => {
   const id = req.params.id;
   const { firstName, lastName, role, permissions, active } = req.body;
@@ -125,20 +102,14 @@ router.put('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Менеджер не найден' });
     }
 
-    const manager = managers[rowIndex - 2];
     const isSelf = String(req.user.id) === String(id);
 
-    // Защита: админ не может снять себе роль admin
     if (isSelf && role && role !== 'admin') {
       return res.status(400).json({ error: 'Нельзя снять с себя роль администратора' });
     }
-
-    // Защита: админ не может снять себе право managers
     if (isSelf && permissions && !permissions.managers) {
       return res.status(400).json({ error: 'Нельзя снять с себя право управления менеджерами' });
     }
-
-    // Защита: нельзя отключить себя
     if (isSelf && active === false) {
       return res.status(400).json({ error: 'Нельзя отключить свой аккаунт' });
     }
@@ -166,27 +137,12 @@ router.put('/:id/password', async (req, res) => {
       return res.status(404).json({ error: 'Менеджер не найден' });
     }
 
-    const manager = managers[rowIndex - 2];
     const password = generatePassword(10);
     const hash = await bcrypt.hash(password, 10);
     await updateSheetData(`Managers!E${rowIndex}:E${rowIndex}`, [[hash]]);
 
-    // Отправляем письмо
-    const { sendPasswordReset } = require('../email');
-    let emailSent = true;
-    try {
-      await sendPasswordReset({
-        email: manager[3],
-        firstName: manager[1] || 'коллега',
-        password,
-        appUrl: process.env.APP_URL || 'https://chat-bot-platform-8mge.onrender.com',
-      });
-    } catch (mailErr) {
-      console.error('Ошибка отправки письма:', mailErr);
-      emailSent = false;
-    }
-
-    res.json({ success: true, emailSent, tempPassword: emailSent ? undefined : password });
+    // Возвращаем новый пароль — админ скопирует и передаст вручную
+    res.json({ success: true, tempPassword: password });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Ошибка сброса пароля' });
@@ -208,16 +164,13 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Менеджер не найден' });
     }
 
-    // Проверка: не последний ли это админ
     const admins = managers.filter(row => row[5] === 'admin' && (row[6] === 'TRUE' || row[6] === true));
-    const targetManager = managers[rowIndex - 2];
-    if (targetManager[5] === 'admin' && admins.length <= 1) {
+    const target = managers[rowIndex - 2];
+    if (target[5] === 'admin' && admins.length <= 1) {
       return res.status(400).json({ error: 'Нельзя удалить последнего администратора' });
     }
 
-    // Очищаем строку (не удаляем — на случай восстановления)
     await updateSheetData(`Managers!A${rowIndex}:J${rowIndex}`, [['', '', '', '', '', '', '', '', '', '']]);
-
     res.json({ success: true });
   } catch (err) {
     console.error(err);
