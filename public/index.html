@@ -15,41 +15,33 @@
     #login-screen h2 { margin-bottom: 20px; }
     #login-screen input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
     #login-screen button { width: 100%; padding: 10px; background: #3390ec; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px; margin-top: 8px; }
-    #login-screen button.secondary { background: transparent; color: #3390ec; font-weight: 500; }
+    #login-hint { font-size: 12px; color: #8a9aa9; text-align: center; margin-top: 14px; }
     #login-error { color: red; display: none; margin-top: 10px; font-size: 13px; }
 
     /* ===== КАРКАС ===== */
     #main-app { display: none; height: 100vh; }
     #main-app.visible { display: flex; }
-
     #navbar { background: #17212b; color: white; display: flex; justify-content: space-around; padding: 8px 0; flex-shrink: 0; }
     #navbar button { background: none; border: none; color: #7f91a4; font-size: 12px; padding: 8px 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
     #navbar button .icon { font-size: 20px; }
     #navbar button.active { color: #3390ec; }
     #navbar button.hidden { display: none !important; }
-
     #content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-
-    /* ===== ПОЛОСА ПОЛЬЗОВАТЕЛЯ ===== */
     #user-bar { background: white; border-bottom: 1px solid #e5e7eb; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
     #user-bar-name { font-size: 13px; color: #17212b; font-weight: 600; }
     #user-bar-name span { color: #8a9aa9; font-weight: 400; margin-left: 6px; }
     #logout-btn { background: transparent; border: 1px solid #e5e7eb; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; color: #707d8f; }
-    #logout-btn:hover { background: #f5f7fa; }
-
     #page-content { flex: 1; display: flex; overflow: hidden; }
 
     /* ===== ЧАТЫ ===== */
     #chats-panel { width: 100%; display: flex; flex-direction: column; background: white; overflow: hidden; }
     #dialog-panel { display: none; flex-direction: column; flex: 1; background: #e7ebf0; overflow: hidden; }
-    #chats-header { padding: 12px 16px; background: white; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; }
+    #chats-header { padding: 12px 16px; background: white; border-bottom: 1px solid #e5e7eb; }
     #chats-header h2 { font-size: 18px; font-weight: 600; }
     #chats-list { flex: 1; overflow-y: auto; }
-
-    .chat-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; cursor: pointer; border-bottom: 1px solid #f0f2f5; transition: background 0.1s; }
+    .chat-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; cursor: pointer; border-bottom: 1px solid #f0f2f5; }
     .chat-item:hover { background: #f5f7fa; }
     .chat-item.unread { background: #eef4fb; }
-    .chat-item.unread:hover { background: #e3eefc; }
     .chat-avatar { width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 18px; }
     .chat-info { flex: 1; min-width: 0; }
     .chat-info-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
@@ -60,36 +52,28 @@
     .chat-preview { font-size: 13px; color: #707d8f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .chat-item.unread .chat-preview { color: #17212b; font-weight: 500; }
     .chat-preview .sender-prefix { color: #8a9aa9; }
-    .chat-unread-badge { background: #3390ec; color: white; border-radius: 12px; min-width: 22px; height: 22px; padding: 0 7px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-left: 8px; }
-
-    /* ===== ДИАЛОГ ===== */
-    #dialog-header { background: white; padding: 10px 16px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 12px; flex-shrink: 0; cursor: pointer; }
-    #dialog-header:hover { background: #f5f7fa; }
-    #back-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #3390ec; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+    .chat-unread-badge { background: #3390ec; color: white; border-radius: 12px; min-width: 22px; height: 22px; padding: 0 7px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+    #dialog-header { background: white; padding: 10px 16px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+    #back-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #3390ec; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
     #dialog-header-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 16px; }
-    #dialog-header-info { flex: 1; min-width: 0; }
-    #dialog-title { font-size: 15px; font-weight: 600; color: #17212b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #dialog-title { font-size: 15px; font-weight: 600; }
     #dialog-subtitle { font-size: 12px; color: #8a9aa9; }
-
     #messages-container { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; background: #e7ebf0; }
     .message-wrapper { display: flex; flex-direction: column; max-width: 75%; }
     .message-wrapper.client { align-self: flex-start; }
     .message-wrapper.bot { align-self: flex-start; }
     .message-wrapper.manager { align-self: flex-end; align-items: flex-end; }
     .message { padding: 7px 12px 6px; border-radius: 12px; font-size: 14px; line-height: 1.4; word-wrap: break-word; white-space: pre-wrap; }
-    .message-wrapper.client .message { background: white; color: #17212b; border-bottom-left-radius: 4px; }
-    .message-wrapper.bot .message { background: #d2e9ff; color: #17212b; border-bottom-left-radius: 4px; }
-    .message-wrapper.manager .message { background: #effdde; color: #17212b; border-bottom-right-radius: 4px; }
-    .message-time { font-size: 11px; color: #8a9aa9; margin-top: 2px; padding: 0 4px; display: flex; gap: 4px; align-items: center; }
+    .message-wrapper.client .message { background: white; border-bottom-left-radius: 4px; }
+    .message-wrapper.bot .message { background: #d2e9ff; border-bottom-left-radius: 4px; }
+    .message-wrapper.manager .message { background: #effdde; border-bottom-right-radius: 4px; }
+    .message-time { font-size: 11px; color: #8a9aa9; margin-top: 2px; padding: 0 4px; }
     .checkmarks { color: #3390ec; font-size: 11px; }
-
-    #reply-area { background: white; padding: 10px 12px; display: flex; gap: 8px; align-items: flex-end; border-top: 1px solid #e5e7eb; flex-shrink: 0; }
-    #reply-input { flex: 1; padding: 10px 14px; border: 1px solid #e5e7eb; border-radius: 20px; font-size: 14px; font-family: inherit; outline: none; }
-    #reply-input:focus { border-color: #3390ec; }
-    #send-reply { background: #3390ec; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+    #reply-area { background: white; padding: 10px 12px; display: flex; gap: 8px; align-items: flex-end; border-top: 1px solid #e5e7eb; }
+    #reply-input { flex: 1; padding: 10px 14px; border: 1px solid #e5e7eb; border-radius: 20px; font-size: 14px; outline: none; }
+    #send-reply { background: #3390ec; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 16px; }
     #empty-state { flex: 1; display: flex; align-items: center; justify-content: center; color: #8a9aa9; font-size: 14px; background: #e7ebf0; }
 
-    /* ===== ОБЩИЕ РАЗДЕЛЫ ===== */
     section.page-section { display: none; flex: 1; overflow-y: auto; padding: 20px; background: #f0f2f5; }
     section.page-section.active { display: block; }
     section.page-section h2 { margin-bottom: 15px; font-size: 18px; }
@@ -97,29 +81,28 @@
     /* ===== КЛИЕНТЫ ===== */
     #clients-toolbar { background: white; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
     #client-search { flex: 1; min-width: 200px; padding: 8px 14px; border: 1px solid #e5e7eb; border-radius: 20px; font-size: 14px; outline: none; }
-    #city-filter { padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; background: white; cursor: pointer; }
+    #city-filter { padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; background: white; }
     #select-all-btn { padding: 8px 14px; border: 1px solid #3390ec; background: white; color: #3390ec; border-radius: 8px; cursor: pointer; font-size: 13px; }
     #clients-table { width: 100%; background: white; border-collapse: collapse; border-radius: 8px; overflow: hidden; }
     #clients-table th, #clients-table td { padding: 10px 12px; text-align: left; font-size: 14px; border-bottom: 1px solid #e5e7eb; }
     #clients-table th { background: #f5f7fa; font-weight: 600; font-size: 13px; color: #707d8f; }
     #clients-table tbody tr { cursor: pointer; }
     #clients-table tbody tr:hover { background: #f9fafb; }
-    .city-input, .phone-input { border: 1px solid transparent; background: transparent; padding: 4px 6px; border-radius: 4px; font-size: 14px; font-family: inherit; width: 100%; }
+    .city-input, .phone-input { border: 1px solid transparent; background: transparent; padding: 4px 6px; border-radius: 4px; font-size: 14px; width: 100%; }
     .city-input:hover, .phone-input:hover { border-color: #e5e7eb; background: white; }
     .city-input:focus, .phone-input:focus { border-color: #3390ec; background: white; outline: none; }
-    #broadcast-btn { position: fixed; bottom: 80px; right: 20px; background: #3390ec; color: white; border: none; padding: 14px 24px; border-radius: 26px; cursor: pointer; font-size: 15px; font-weight: 600; box-shadow: 0 4px 12px rgba(51, 144, 236, 0.4); display: none; z-index: 500; }
+    #broadcast-btn { position: fixed; bottom: 80px; right: 20px; background: #3390ec; color: white; border: none; padding: 14px 24px; border-radius: 26px; cursor: pointer; font-size: 15px; font-weight: 600; box-shadow: 0 4px 12px rgba(51,144,236,0.4); display: none; z-index: 500; }
     #broadcast-btn.visible { display: block; }
 
     /* ===== МЕНЕДЖЕРЫ ===== */
     .manager-card { background: white; padding: 14px 16px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
     .manager-info { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
     .manager-avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 15px; }
-    .manager-details { min-width: 0; }
     .manager-name { font-size: 15px; color: #17212b; font-weight: 600; }
     .manager-email { font-size: 12px; color: #8a9aa9; margin-top: 2px; }
     .manager-role { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; background: #eef4fb; color: #3390ec; margin-left: 8px; }
     .manager-role.admin { background: #fff3cd; color: #856404; }
-    .manager-actions button { background: transparent; border: 1px solid #e5e7eb; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-left: 4px; }
+    .manager-actions button { background: transparent; border: 1px solid #e5e7eb; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
     #add-manager-btn { padding: 10px 16px; background: #3390ec; color: white; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 15px; font-weight: 600; }
 
     /* ===== МОДАЛКИ ===== */
@@ -127,27 +110,78 @@
     .modal-backdrop.visible { display: flex; }
     .modal-content { background: white; border-radius: 12px; padding: 24px; max-width: 500px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
     .modal-content h3 { margin-bottom: 16px; font-size: 18px; }
-    .modal-content textarea { width: 100%; min-height: 120px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical; outline: none; }
     .modal-content .form-row { margin-bottom: 12px; }
     .modal-content .form-row label { display: block; font-size: 12px; color: #707d8f; margin-bottom: 4px; font-weight: 500; }
-    .modal-content .form-row input, .modal-content .form-row select { width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; }
+    .modal-content .form-row input, .modal-content .form-row select { width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; outline: none; }
     .modal-content .form-row input:focus, .modal-content .form-row select:focus { border-color: #3390ec; }
+    .modal-content textarea { width: 100%; min-height: 120px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; resize: vertical; outline: none; }
     .modal-content .perm-list { margin-top: 8px; padding: 12px; background: #f9fafb; border-radius: 8px; }
     .modal-content .perm-list label { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 14px; cursor: pointer; }
-    .modal-content .perm-list input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
     .modal-actions { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
     .modal-actions button { padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; border: none; }
     .btn-cancel { background: #f0f2f5; color: #17212b; }
     .btn-primary { background: #3390ec; color: white; }
     .btn-danger { background: #dc3545; color: white; }
+    .btn-success { background: #28a745; color: white; }
     .btn-primary:disabled, .btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
     #broadcast-progress { margin-top: 12px; font-size: 13px; color: #707d8f; min-height: 18px; }
-
-    /* Карточка клиента */
     #client-modal .client-modal-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
     #client-modal .client-modal-avatar { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 26px; }
     #client-modal .readonly-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #f0f2f5; color: #707d8f; }
     #client-modal .readonly-row span:last-child { color: #17212b; font-family: monospace; }
+
+    /* ===== БЛОК СГЕНЕРИРОВАННОГО ПАРОЛЯ ===== */
+    .password-block {
+      background: #fff8e6;
+      border: 1px solid #ffe0a3;
+      border-radius: 8px;
+      padding: 14px;
+      margin-top: 14px;
+      display: none;
+    }
+    .password-block.visible { display: block; }
+    .password-block-title {
+      font-size: 13px;
+      color: #856404;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .password-value {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      border: 1px solid #ffe0a3;
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+    .password-value code {
+      flex: 1;
+      font-size: 15px;
+      font-family: monospace;
+      color: #17212b;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      word-break: break-all;
+    }
+    .password-copy-btn {
+      background: #3390ec;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .password-copy-btn:hover { background: #2a7fd0; }
+    .password-copy-btn.copied { background: #28a745; }
+    .password-hint {
+      font-size: 12px;
+      color: #856404;
+      margin-top: 8px;
+    }
 
     /* ===== SPINNER ===== */
     .spinner { width: 32px; height: 32px; border: 3px solid #e5e7eb; border-top-color: #3390ec; border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -155,7 +189,6 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .loader-container { display: flex; align-items: center; justify-content: center; padding: 40px 20px; width: 100%; color: #8a9aa9; font-size: 14px; }
 
-    /* ===== АДАПТИВ ===== */
     @media (max-width: 767px) {
       #main-app { flex-direction: column; }
       #navbar { order: 2; overflow-x: auto; }
@@ -174,14 +207,13 @@
   </style>
 </head>
 <body>
-  <!-- ЛОГИН -->
   <div id="login-screen">
     <h2>Вход в админку</h2>
     <input type="email" id="email-input" placeholder="Email" autocomplete="email" />
     <input type="password" id="password-input" placeholder="Пароль" autocomplete="current-password" />
     <button id="login-btn">Войти</button>
-    <button id="forgot-btn" class="secondary">Забыли пароль?</button>
     <div id="login-error"></div>
+    <div id="login-hint">Забыли пароль? Обратитесь к администратору</div>
   </div>
 
   <div id="main-app">
@@ -199,9 +231,7 @@
         <div id="user-bar-name">—</div>
         <button id="logout-btn">Выйти</button>
       </div>
-
       <div id="page-content">
-        <!-- ЧАТЫ -->
         <div id="section-chats" style="display: flex; flex: 1; overflow: hidden;">
           <div id="chats-panel">
             <div id="chats-header"><h2>Чаты</h2></div>
@@ -225,17 +255,15 @@
           </div>
         </div>
 
-        <!-- СЦЕНАРИИ -->
         <section id="section-rules" class="page-section">
           <h2>Автоответы</h2>
-          <button id="add-rule-btn">+ Добавить правило</button>
-          <table id="rules-table" style="width:100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden;">
+          <button id="add-rule-btn" style="padding:8px 16px;background:#3390ec;color:white;border:none;border-radius:6px;cursor:pointer;margin-bottom:15px;">+ Добавить правило</button>
+          <table id="rules-table" style="width:100%;border-collapse:collapse;background:white;border-radius:8px;overflow:hidden;">
             <thead><tr style="background:#f5f7fa;"><th style="padding:10px;text-align:left;">Ключевое слово</th><th style="padding:10px;text-align:left;">Ответ</th><th style="padding:10px;text-align:left;">Активен</th><th style="padding:10px;text-align:left;">Действия</th></tr></thead>
             <tbody id="rules-body"></tbody>
           </table>
         </section>
 
-        <!-- КЛИЕНТЫ -->
         <section id="section-clients" class="page-section">
           <h2>Клиенты</h2>
           <div id="clients-toolbar">
@@ -250,14 +278,12 @@
           <button id="broadcast-btn">📤 Отправить рассылку</button>
         </section>
 
-        <!-- МЕНЕДЖЕРЫ -->
         <section id="section-managers" class="page-section">
           <h2>Менеджеры</h2>
           <button id="add-manager-btn">+ Добавить менеджера</button>
           <div id="managers-list"></div>
         </section>
 
-        <!-- НАСТРОЙКИ -->
         <section id="section-settings" class="page-section">
           <h2>Настройки бота</h2>
           <div style="max-width:500px;background:white;padding:20px;border-radius:8px;">
@@ -268,7 +294,6 @@
           </div>
         </section>
 
-        <!-- МОИ НАСТРОЙКИ -->
         <section id="section-me" class="page-section">
           <h2>Мои настройки</h2>
           <div style="max-width:500px;">
@@ -310,22 +335,6 @@
     </div>
   </div>
 
-  <!-- МОДАЛКА ЗАБЫЛИ ПАРОЛЬ -->
-  <div id="forgot-modal" class="modal-backdrop">
-    <div class="modal-content">
-      <h3>Восстановление пароля</h3>
-      <p style="font-size:13px;color:#707d8f;margin-bottom:12px;">Введите email, и мы отправим на него новый пароль.</p>
-      <div class="form-row">
-        <input type="email" id="forgot-email" placeholder="ваш@email.com" />
-      </div>
-      <div id="forgot-msg" style="margin-top:8px;font-size:13px;"></div>
-      <div class="modal-actions">
-        <button id="forgot-cancel" class="btn-cancel">Отмена</button>
-        <button id="forgot-send" class="btn-primary">Отправить</button>
-      </div>
-    </div>
-  </div>
-
   <!-- МОДАЛКА МЕНЕДЖЕРА -->
   <div id="manager-modal" class="modal-backdrop">
     <div class="modal-content">
@@ -354,6 +363,17 @@
         <label>Права доступа</label>
         <div class="perm-list" id="mm-perms"></div>
       </div>
+
+      <!-- БЛОК С ПАРОЛЕМ -->
+      <div class="password-block" id="mm-password-block">
+        <div class="password-block-title">⚠️ Сохраните пароль — он показывается только один раз</div>
+        <div class="password-value">
+          <code id="mm-password-value">—</code>
+          <button class="password-copy-btn" id="mm-copy-btn" data-password="">Скопировать</button>
+        </div>
+        <div class="password-hint">Передайте эти данные сотруднику лично. Пароль можно сменить позже.</div>
+      </div>
+
       <div id="mm-msg" style="margin-top:8px;font-size:13px;"></div>
       <div class="modal-actions">
         <button id="mm-delete" class="btn-danger" style="display:none;margin-right:auto;">Удалить</button>
@@ -403,7 +423,6 @@
   </div>
 
   <script>
-    // ===== ГЛОБАЛЬНЫЕ =====
     let token = null;
     let currentUser = null;
     let currentChatId = null;
@@ -417,15 +436,9 @@
 
     const ALL_PERMISSIONS = ['view_chats','reply_chats','view_clients','edit_clients','broadcast','rules','settings','managers','yclients'];
     const PERMISSION_LABELS = {
-      view_chats: 'Просмотр чатов',
-      reply_chats: 'Ответы в чатах',
-      view_clients: 'Просмотр клиентов',
-      edit_clients: 'Редактирование клиентов',
-      broadcast: 'Рассылки',
-      rules: 'Сценарии / автоответы',
-      settings: 'Настройки бота',
-      managers: 'Управление менеджерами',
-      yclients: 'YCLIENTS',
+      view_chats: 'Просмотр чатов', reply_chats: 'Ответы в чатах', view_clients: 'Просмотр клиентов',
+      edit_clients: 'Редактирование клиентов', broadcast: 'Рассылки', rules: 'Сценарии / автоответы',
+      settings: 'Настройки бота', managers: 'Управление менеджерами', yclients: 'YCLIENTS',
     };
     const ROLE_PRESETS = {
       admin: ALL_PERMISSIONS.reduce((a,p) => ({...a, [p]:true}), {}),
@@ -433,13 +446,11 @@
       viewer: { view_chats:true, view_clients:true },
     };
 
-    // ===== DOM =====
     const loginScreen = document.getElementById('login-screen');
     const mainApp = document.getElementById('main-app');
     const emailInput = document.getElementById('email-input');
     const passwordInput = document.getElementById('password-input');
     const loginBtn = document.getElementById('login-btn');
-    const forgotBtn = document.getElementById('forgot-btn');
     const loginError = document.getElementById('login-error');
 
     const navBtns = document.querySelectorAll('.nav-btn');
@@ -463,7 +474,6 @@
     const backBtn = document.getElementById('back-btn');
     const emptyState = document.getElementById('empty-state');
     const userBarName = document.getElementById('user-bar-name');
-    const logoutBtn = document.getElementById('logout-btn');
 
     // ===== УТИЛИТЫ =====
     const AVATAR_COLORS = ['#e17076', '#7bc862', '#65aadd', '#a695e7', '#ee7aae', '#6ec9cb', '#faa774', '#e5a238', '#a1c54a', '#7f8fa6'];
@@ -482,40 +492,75 @@
       if (currentUser.role === 'admin') return true;
       return !!(currentUser.permissions && currentUser.permissions[p]);
     }
+    function formatTime(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return '';
+      const now = new Date();
+      if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+      const y = new Date(now); y.setDate(now.getDate() - 1);
+      if (d.toDateString() === y.toDateString()) return 'вчера';
+      return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+    }
+    function getSenderPrefix(s) {
+      if (s === 'manager') return '<span class="sender-prefix">Вы: </span>';
+      if (s === 'bot') return '<span class="sender-prefix">Бот: </span>';
+      return '';
+    }
+
+    // ===== КОПИРОВАНИЕ В БУФЕР =====
+    function copyToClipboard(text, btn) {
+      const done = () => {
+        const oldText = btn.textContent;
+        btn.textContent = 'Скопировано';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = oldText; btn.classList.remove('copied'); }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+      } else {
+        fallbackCopy(text, done);
+      }
+    }
+    function fallbackCopy(text, done) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { alert('Не удалось скопировать: ' + text); }
+      document.body.removeChild(ta);
+    }
 
     // ===== AUTH =====
     function saveSession(tok, user) {
-      token = tok;
-      currentUser = user;
+      token = tok; currentUser = user;
       localStorage.setItem('chatBotToken', tok);
       localStorage.setItem('chatBotUser', JSON.stringify(user));
     }
     function clearSession() {
-      token = null;
-      currentUser = null;
+      token = null; currentUser = null;
       localStorage.removeItem('chatBotToken');
       localStorage.removeItem('chatBotUser');
     }
-
     function logout() {
       clearSession();
       loginScreen.style.display = 'block';
       mainApp.classList.remove('visible');
       if (unreadInterval) clearInterval(unreadInterval);
     }
-    logoutBtn.addEventListener('click', logout);
+    document.getElementById('logout-btn').addEventListener('click', logout);
 
     async function login() {
       const email = emailInput.value.trim();
       const password = passwordInput.value;
       if (!email || !password) return;
       loginError.style.display = 'none';
-      loginBtn.disabled = true;
-      loginBtn.textContent = 'Вход...';
+      loginBtn.disabled = true; loginBtn.textContent = 'Вход...';
       try {
         const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
         });
         const data = await res.json();
@@ -523,8 +568,7 @@
           saveSession(data.token, data.user);
           loginScreen.style.display = 'none';
           mainApp.classList.add('visible');
-          applyPermissions();
-          initApp();
+          applyPermissions(); initApp();
         } else {
           loginError.textContent = data.error || 'Ошибка входа';
           loginError.style.display = 'block';
@@ -532,10 +576,7 @@
       } catch {
         loginError.textContent = 'Ошибка сети';
         loginError.style.display = 'block';
-      } finally {
-        loginBtn.disabled = false;
-        loginBtn.textContent = 'Войти';
-      }
+      } finally { loginBtn.disabled = false; loginBtn.textContent = 'Войти'; }
     }
     loginBtn.addEventListener('click', login);
     passwordInput.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
@@ -550,99 +591,34 @@
           saveSession(savedToken, user);
           loginScreen.style.display = 'none';
           mainApp.classList.add('visible');
-          applyPermissions();
-          initApp();
+          applyPermissions(); initApp();
           return true;
-        } else {
-          clearSession();
-          return false;
-        }
-      } catch {
-        clearSession();
-        return false;
-      }
+        } else { clearSession(); return false; }
+      } catch { clearSession(); return false; }
     }
 
-    // ===== ЗАБЫЛИ ПАРОЛЬ =====
-    const forgotModal = document.getElementById('forgot-modal');
-    forgotBtn.addEventListener('click', () => {
-      document.getElementById('forgot-email').value = emailInput.value || '';
-      document.getElementById('forgot-msg').textContent = '';
-      forgotModal.classList.add('visible');
-    });
-    document.getElementById('forgot-cancel').addEventListener('click', () => forgotModal.classList.remove('visible'));
-    document.getElementById('forgot-send').addEventListener('click', async () => {
-      const email = document.getElementById('forgot-email').value.trim();
-      const msg = document.getElementById('forgot-msg');
-      if (!email) { msg.style.color = 'red'; msg.textContent = 'Введите email'; return; }
-      msg.style.color = '#3390ec';
-      msg.textContent = 'Отправка...';
-      try {
-        const res = await fetch('/api/auth/forgot', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-        const data = await res.json();
-        msg.style.color = '#28a745';
-        msg.textContent = data.message || 'Проверьте почту';
-      } catch {
-        msg.style.color = 'red';
-        msg.textContent = 'Ошибка сети';
-      }
-    });
-
-    // ===== ПРИМЕНИТЬ ПРАВА =====
     function applyPermissions() {
       if (!currentUser) return;
-      // Показ имени
       userBarName.innerHTML = `${escapeHtml(currentUser.name)} <span>${currentUser.role === 'admin' ? 'Админ' : ''}</span>`;
-
-      // Показать/скрыть разделы
       const isAdmin = currentUser.role === 'admin';
-      const rulesBtn = document.querySelector('[data-section="rules"]');
-      const managersBtn = document.querySelector('[data-section="managers"]');
-      const settingsBtn = document.querySelector('[data-section="settings"]');
-
-      rulesBtn.classList.toggle('hidden', !(isAdmin || hasPerm('rules')));
-      managersBtn.classList.toggle('hidden', !(isAdmin || hasPerm('managers')));
-      settingsBtn.classList.toggle('hidden', !(isAdmin || hasPerm('settings')));
+      document.querySelector('[data-section="rules"]').classList.toggle('hidden', !(isAdmin || hasPerm('rules')));
+      document.querySelector('[data-section="managers"]').classList.toggle('hidden', !(isAdmin || hasPerm('managers')));
+      document.querySelector('[data-section="settings"]').classList.toggle('hidden', !(isAdmin || hasPerm('settings')));
     }
 
-    // ===== НАВИГАЦИЯ =====
     navBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         const section = btn.dataset.section;
         navBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-
         sectionChats.style.display = 'none';
-        sectionRules.classList.remove('active');
-        sectionClients.classList.remove('active');
-        sectionManagers.classList.remove('active');
-        sectionSettings.classList.remove('active');
-        sectionMe.classList.remove('active');
-
-        if (section === 'chats') {
-          sectionChats.style.display = 'flex';
-          showChatsList();
-          loadChats();
-        } else if (section === 'rules') {
-          sectionRules.classList.add('active');
-          loadRules();
-        } else if (section === 'clients') {
-          sectionClients.classList.add('active');
-          loadClients();
-        } else if (section === 'managers') {
-          sectionManagers.classList.add('active');
-          loadManagers();
-        } else if (section === 'settings') {
-          sectionSettings.classList.add('active');
-          loadSettings();
-        } else if (section === 'me') {
-          sectionMe.classList.add('active');
-          loadMe();
-        }
+        [sectionRules, sectionClients, sectionManagers, sectionSettings, sectionMe].forEach(s => s.classList.remove('active'));
+        if (section === 'chats') { sectionChats.style.display = 'flex'; showChatsList(); loadChats(); }
+        else if (section === 'rules') { sectionRules.classList.add('active'); loadRules(); }
+        else if (section === 'clients') { sectionClients.classList.add('active'); loadClients(); }
+        else if (section === 'managers') { sectionManagers.classList.add('active'); loadManagers(); }
+        else if (section === 'settings') { sectionSettings.classList.add('active'); loadSettings(); }
+        else if (section === 'me') { sectionMe.classList.add('active'); loadMe(); }
       });
     });
 
@@ -655,7 +631,6 @@
       }, 4000);
     }
 
-    // ===== PWA PUSH =====
     function urlBase64ToUint8Array(base64String) {
       const padding = '='.repeat((4 - base64String.length % 4) % 4);
       const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
@@ -676,33 +651,10 @@
           sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(key) });
         }
         await fetch('/api/push/subscribe', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify(sub)
         });
       } catch (err) { console.error(err); }
-    }
-
-    // ===== ХЕЛПЕРЫ SPINNER =====
-    function showChatsLoader() { chatsList.innerHTML = '<div class="loader-container"><div class="spinner"></div></div>'; }
-    function showMessagesLoader() { messagesContainer.innerHTML = '<div class="loader-container"><div class="spinner"></div></div>'; }
-    function showClientsLoader() { document.getElementById('clients-body').innerHTML = '<tr><td colspan="6"><div class="loader-container"><div class="spinner"></div></div></td></tr>'; }
-
-    // ===== ЧАТЫ =====
-    function formatTime(iso) {
-      if (!iso) return '';
-      const d = new Date(iso);
-      if (isNaN(d.getTime())) return '';
-      const now = new Date();
-      if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-      const y = new Date(now); y.setDate(now.getDate() - 1);
-      if (d.toDateString() === y.toDateString()) return 'вчера';
-      return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
-    }
-    function getSenderPrefix(s) {
-      if (s === 'manager') return '<span class="sender-prefix">Вы: </span>';
-      if (s === 'bot') return '<span class="sender-prefix">Бот: </span>';
-      return '';
     }
 
     async function loadChats() {
@@ -713,11 +665,9 @@
         chatsCache = {};
         chats.forEach(c => chatsCache[c.chatId] = c);
         if (chats.length === 0) { chatsList.innerHTML = '<div class="loader-container">Нет чатов</div>'; return; }
-
         chatsList.innerHTML = chats.map(chat => {
           const name = chat.displayName || chat.name || 'Клиент';
-          const color = getAvatarColor(name);
-          const initial = getInitial(name);
+          const color = getAvatarColor(name); const initial = getInitial(name);
           const unread = chat.unread > 0;
           const time = chat.lastTime ? formatTime(chat.lastTime) : '';
           const prefix = getSenderPrefix(chat.lastSender);
@@ -730,7 +680,6 @@
             </div>
           </div>`;
         }).join('');
-
         document.querySelectorAll('.chat-item').forEach(el => el.addEventListener('click', () => openDialog(el.dataset.chatid)));
         if (window.innerWidth >= 768 && currentChatId) openDialog(currentChatId, true);
       } catch (e) { console.error(e); }
@@ -746,7 +695,7 @@
       dialogTitle.textContent = name;
       dialogSubtitle.textContent = chat.phone || '';
       showDialogPanel();
-      showMessagesLoader();
+      messagesContainer.innerHTML = '<div class="loader-container"><div class="spinner"></div></div>';
       try {
         const res = await fetch(`/api/chats/${chatId}/messages`, { headers: { 'Authorization': `Bearer ${token}` } });
         if (!res.ok) { if (res.status === 401) { logout(); return; } throw new Error(); }
@@ -803,8 +752,7 @@
       sendReplyBtn.innerHTML = '<span class="spinner-small"></span>';
       try {
         const res = await fetch('/api/chats/message', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ chatId: currentChatId, text })
         });
         if (!res.ok) { if (res.status === 401) { logout(); return; } throw new Error(); }
@@ -814,7 +762,6 @@
       finally { sendReplyBtn.disabled = false; sendReplyBtn.textContent = '➤'; }
     }
 
-    // ===== ПРАВИЛА =====
     async function loadRules() {
       try {
         const res = await fetch('/api/rules', { headers: { 'Authorization': `Bearer ${token}` } });
@@ -833,8 +780,7 @@
       const k = prompt('Ключевое слово:'); if (!k) return;
       const r = prompt('Ответ бота:'); if (!r) return;
       fetch('/api/rules', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ keyword: k, response: r, active: true })
       }).then(() => loadRules());
     });
@@ -844,16 +790,14 @@
       loadRules();
     };
 
-    // ===== КЛИЕНТЫ =====
     async function loadClients() {
-      showClientsLoader();
+      document.getElementById('clients-body').innerHTML = '<tr><td colspan="6"><div class="loader-container"><div class="spinner"></div></div></td></tr>';
       try {
         const res = await fetch('/api/clients', { headers: { 'Authorization': `Bearer ${token}` } });
         if (!res.ok) { if (res.status === 401) { logout(); return; } throw new Error(); }
         clientsData = await res.json();
         selectedClients.clear();
-        updateCityFilter();
-        renderClients();
+        updateCityFilter(); renderClients();
       } catch (e) { console.error(e); }
     }
     function updateCityFilter() {
@@ -873,12 +817,10 @@
       });
       const tbody = document.getElementById('clients-body');
       if (filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="6"><div class="loader-container">Ничего не найдено</div></td></tr>'; updateBroadcastButton(); return; }
-
       const canEdit = hasPerm('edit_clients');
       tbody.innerHTML = filtered.map(c => {
         const name = fullName(c);
-        const color = getAvatarColor(c.name);
-        const initial = getInitial(c.name);
+        const color = getAvatarColor(c.name); const initial = getInitial(c.name);
         const checked = selectedClients.has(c.chatId) ? 'checked' : '';
         const time = c.lastTime ? formatTime(c.lastTime) : '';
         return `<tr class="client-row" data-chatid="${c.chatId}" style="border-bottom:1px solid #e5e7eb;">
@@ -890,7 +832,6 @@
           <td style="padding:10px;">${time}</td>
         </tr>`;
       }).join('');
-
       document.querySelectorAll('.client-row').forEach(row => row.addEventListener('click', () => {
         const c = clientsData.find(x => String(x.chatId) === String(row.dataset.chatid));
         if (c) openClientModal(c);
@@ -937,12 +878,9 @@
       if (selectedClients.size > 0 && hasPerm('broadcast')) {
         btn.classList.add('visible');
         btn.textContent = `📤 Отправить рассылку (${selectedClients.size})`;
-      } else {
-        btn.classList.remove('visible');
-      }
+      } else { btn.classList.remove('visible'); }
     }
 
-    // ===== КАРТОЧКА КЛИЕНТА =====
     const clientModal = document.getElementById('client-modal');
     const cmAvatar = document.getElementById('cm-avatar');
     const cmTitle = document.getElementById('cm-title');
@@ -962,11 +900,8 @@
       cmAvatar.textContent = getInitial(c.name);
       cmTitle.textContent = name;
       cmSourceTop.textContent = c.source || 'Telegram';
-      cmName.value = c.name || '';
-      cmLastName.value = c.lastName || '';
-      cmUsername.value = c.username || '';
-      cmPhone.value = c.phone || '';
-      cmCity.value = c.city || '';
+      cmName.value = c.name || ''; cmLastName.value = c.lastName || '';
+      cmUsername.value = c.username || ''; cmPhone.value = c.phone || ''; cmCity.value = c.city || '';
       cmChatId.textContent = c.chatId || '—';
       cmSource2.textContent = c.source || 'Telegram';
       clientModal.classList.add('visible');
@@ -977,10 +912,11 @@
       const btn = document.getElementById('cm-save');
       btn.disabled = true; btn.innerHTML = '<span class="spinner-small"></span>';
       try {
-        const name = cmName.value.trim(), lastName = cmLastName.value.trim(), username = cmUsername.value.trim().replace(/^@/, ''), phone = cmPhone.value.trim(), city = cmCity.value.trim();
+        const name = cmName.value.trim(), lastName = cmLastName.value.trim();
+        const username = cmUsername.value.trim().replace(/^@/, '');
+        const phone = cmPhone.value.trim(), city = cmCity.value.trim();
         const res = await fetch(`/api/clients/${currentClientModal}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ name, lastName, username, phone, city })
         });
         if (!res.ok) throw new Error();
@@ -1021,6 +957,9 @@
     const mmSave = document.getElementById('mm-save');
     const mmDelete = document.getElementById('mm-delete');
     const mmReset = document.getElementById('mm-reset');
+    const mmPassBlock = document.getElementById('mm-password-block');
+    const mmPassValue = document.getElementById('mm-password-value');
+    const mmCopyBtn = document.getElementById('mm-copy-btn');
 
     async function loadManagers() {
       try {
@@ -1035,13 +974,12 @@
       if (managersData.length === 0) { list.innerHTML = '<div class="loader-container">Нет менеджеров</div>'; return; }
       list.innerHTML = managersData.map(m => {
         const name = m.name || m.email;
-        const color = getAvatarColor(name);
-        const initial = getInitial(name);
+        const color = getAvatarColor(name); const initial = getInitial(name);
         const roleLabel = m.role === 'admin' ? 'Администратор' : (m.role === 'viewer' ? 'Наблюдатель' : 'Менеджер');
         return `<div class="manager-card">
           <div class="manager-info">
             <div class="manager-avatar" style="background:${color}">${initial}</div>
-            <div class="manager-details">
+            <div>
               <div class="manager-name">${escapeHtml(name)} ${!m.active ? '<span style="color:#dc3545;font-size:11px;">(отключён)</span>' : ''}<span class="manager-role ${m.role === 'admin' ? 'admin' : ''}">${roleLabel}</span></div>
               <div class="manager-email">${escapeHtml(m.email)}</div>
             </div>
@@ -1057,32 +995,44 @@
       mmPerms.innerHTML = ALL_PERMISSIONS.map(p => `
         <label><input type="checkbox" data-perm="${p}" ${perms[p] ? 'checked' : ''} /> ${PERMISSION_LABELS[p]}</label>
       `).join('');
-      mmPerms.querySelectorAll('input').forEach(cb => cb.addEventListener('change', () => {
-        // При ручном изменении — роль остаётся, но права меняются
-      }));
     }
     function getPermsFromUI() {
       const out = {};
       mmPerms.querySelectorAll('input[data-perm]').forEach(cb => { out[cb.dataset.perm] = cb.checked; });
       return out;
     }
-
     mmRole.addEventListener('change', () => {
       const preset = ROLE_PRESETS[mmRole.value];
       if (preset) renderPerms(preset);
     });
 
+    function hidePasswordBlock() {
+      mmPassBlock.classList.remove('visible');
+      mmPassValue.textContent = '—';
+      mmCopyBtn.dataset.password = '';
+      mmCopyBtn.textContent = 'Скопировать';
+      mmCopyBtn.classList.remove('copied');
+    }
+    function showPasswordBlock(password) {
+      mmPassValue.textContent = password;
+      mmCopyBtn.dataset.password = password;
+      mmPassBlock.classList.add('visible');
+    }
+    mmCopyBtn.addEventListener('click', () => {
+      const p = mmCopyBtn.dataset.password;
+      if (p) copyToClipboard(p, mmCopyBtn);
+    });
+
     function openManagerModal(id) {
       editingManagerId = id || null;
       mmMsg.textContent = '';
+      hidePasswordBlock();
       if (id) {
         const m = managersData.find(x => String(x.id) === String(id));
         if (!m) return;
         mmTitle.textContent = 'Редактировать менеджера';
-        mmFirst.value = m.firstName || '';
-        mmLast.value = m.lastName || '';
-        mmEmail.value = m.email || '';
-        mmEmailRow.style.display = 'none';
+        mmFirst.value = m.firstName || ''; mmLast.value = m.lastName || '';
+        mmEmail.value = m.email || ''; mmEmailRow.style.display = 'none';
         mmRole.value = m.role || 'manager';
         renderPerms(m.permissions || {});
         mmDelete.style.display = 'inline-block';
@@ -1099,7 +1049,7 @@
       managerModal.classList.add('visible');
     }
     document.getElementById('add-manager-btn').addEventListener('click', () => openManagerModal(null));
-    document.getElementById('mm-cancel').addEventListener('click', () => { managerModal.classList.remove('visible'); editingManagerId = null; });
+    document.getElementById('mm-cancel').addEventListener('click', () => { managerModal.classList.remove('visible'); editingManagerId = null; hidePasswordBlock(); });
 
     mmSave.addEventListener('click', async () => {
       const firstName = mmFirst.value.trim();
@@ -1115,48 +1065,57 @@
       try {
         if (editingManagerId) {
           const res = await fetch(`/api/managers/${editingManagerId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ firstName, lastName, role, permissions })
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.error || 'Ошибка');
-          managerModal.classList.remove('visible'); editingManagerId = null;
-          loadManagers();
+          mmMsg.style.color = '#28a745'; mmMsg.textContent = 'Сохранено';
+          setTimeout(() => { managerModal.classList.remove('visible'); editingManagerId = null; loadManagers(); }, 800);
         } else {
           const res = await fetch('/api/managers', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ firstName, lastName, email, role, permissions })
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.error || 'Ошибка');
-          if (data.emailSent) {
-            mmMsg.style.color = '#28a745';
-            mmMsg.textContent = 'Менеджер создан, приглашение отправлено на почту';
-            setTimeout(() => { managerModal.classList.remove('visible'); loadManagers(); }, 2000);
-          } else {
-            mmMsg.style.color = '#dc3545';
-            mmMsg.innerHTML = `Менеджер создан, но письмо не ушло.<br>Временный пароль: <b>${data.tempPassword}</b><br>Сообщите его вручную.`;
-          }
+
+          // Показываем блок с паролем
+          mmMsg.style.color = '#28a745';
+          mmMsg.textContent = '✅ Менеджер создан! Скопируйте пароль и передайте сотруднику:';
+          showPasswordBlock(data.tempPassword);
+
+          // Меняем кнопки: "Сохранить" → "Готово"
+          mmSave.textContent = 'Готово';
+          mmSave.onclick = () => {
+            managerModal.classList.remove('visible');
+            editingManagerId = null;
+            hidePasswordBlock();
+            mmSave.textContent = 'Сохранить';
+            mmSave.onclick = null; // вернём через location.reload не нужно — зададим снова
+            loadManagers();
+          };
         }
       } catch (e) {
         mmMsg.style.color = 'red'; mmMsg.textContent = e.message;
-      } finally { mmSave.disabled = false; mmSave.textContent = 'Сохранить'; }
+      } finally {
+        if (!mmSave.onclick) { mmSave.disabled = false; mmSave.textContent = 'Сохранить'; }
+        else { mmSave.disabled = false; }
+      }
     });
 
     mmReset.addEventListener('click', async () => {
       if (!editingManagerId) return;
-      if (!confirm('Сбросить пароль и отправить новый на email?')) return;
+      if (!confirm('Сбросить пароль? Текущий станет недействительным.')) return;
       try {
         const res = await fetch(`/api/managers/${editingManagerId}/password`, {
-          method: 'PUT',
-          headers: { 'Authorization': `Bearer ${token}` }
+          method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
-        if (data.emailSent) { mmMsg.style.color = '#28a745'; mmMsg.textContent = 'Новый пароль отправлен на почту'; }
-        else { mmMsg.style.color = '#dc3545'; mmMsg.innerHTML = `Письмо не ушло. Новый пароль: <b>${data.tempPassword}</b>`; }
+        mmMsg.style.color = '#28a745';
+        mmMsg.textContent = '✅ Пароль сброшен! Скопируйте новый пароль:';
+        showPasswordBlock(data.tempPassword);
       } catch (e) { mmMsg.style.color = 'red'; mmMsg.textContent = e.message; }
     });
 
@@ -1165,8 +1124,7 @@
       if (!confirm('Удалить менеджера?')) return;
       try {
         const res = await fetch(`/api/managers/${editingManagerId}`, {
-          method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${token}` }
+          method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
@@ -1188,12 +1146,10 @@
       const msg = document.getElementById('me-profile-msg');
       try {
         const res = await fetch('/api/auth/me', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ firstName, lastName })
         });
         if (!res.ok) throw new Error();
-        // Обновим локальные данные
         currentUser.firstName = firstName;
         currentUser.lastName = lastName;
         currentUser.name = [firstName, lastName].filter(Boolean).join(' ') || currentUser.email;
@@ -1214,8 +1170,7 @@
       if (p1.length < 6) { msg.style.color = 'red'; msg.textContent = 'Пароль не короче 6 символов'; return; }
       try {
         const res = await fetch('/api/auth/password', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ oldPassword: oldP, newPassword: p1 })
         });
         const data = await res.json();
@@ -1228,7 +1183,6 @@
       } catch (e) { msg.style.color = 'red'; msg.textContent = e.message; }
     });
 
-    // ===== НАСТРОЙКИ БОТА =====
     async function loadSettings() {
       try {
         const res = await fetch('/api/settings', { headers: { 'Authorization': `Bearer ${token}` } });
@@ -1241,14 +1195,13 @@
       const botToken = document.getElementById('bot-token-input').value.trim();
       if (!botToken) return alert('Введите токен');
       await fetch('/api/settings', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ botToken })
       });
       document.getElementById('settings-message').textContent = 'Сохранено!';
     });
 
-    // ===== МОДАЛКА РАССЫЛКИ =====
+    // ===== РАССЫЛКА =====
     const modalBackdrop = document.getElementById('modal-backdrop');
     const broadcastText = document.getElementById('broadcast-text');
     const broadcastProgress = document.getElementById('broadcast-progress');
@@ -1258,10 +1211,8 @@
 
     document.getElementById('broadcast-btn').addEventListener('click', () => {
       document.getElementById('modal-count').textContent = selectedClients.size;
-      broadcastText.value = '';
-      broadcastProgress.textContent = '';
-      modalSendBtn.disabled = false;
-      modalSendBtn.textContent = 'Отправить';
+      broadcastText.value = ''; broadcastProgress.textContent = '';
+      modalSendBtn.disabled = false; modalSendBtn.textContent = 'Отправить';
       modalSendBtn.onclick = sendBroadcast;
       modalBackdrop.classList.add('visible');
     });
@@ -1277,8 +1228,7 @@
       broadcastProgress.textContent = '⏳ Запуск рассылки...';
       try {
         const res = await fetch('/api/broadcast', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ chatIds, text })
         });
         const data = await res.json();
@@ -1306,7 +1256,6 @@
       } catch (e) { broadcastProgress.textContent = '❌ Сетевая ошибка'; modalSendBtn.disabled = false; modalSendBtn.textContent = 'Отправить'; }
     }
 
-    // ===== РЕСАЙЗ =====
     window.addEventListener('resize', () => {
       if (window.innerWidth >= 768) {
         document.getElementById('chats-panel').style.display = 'flex';
@@ -1317,7 +1266,6 @@
       }
     });
 
-    // ===== СТАРТ =====
     (async function() {
       const ok = await autoLogin();
       if (!ok) { loginScreen.style.display = 'block'; mainApp.classList.remove('visible'); }
