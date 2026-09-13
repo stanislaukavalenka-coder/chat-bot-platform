@@ -106,83 +106,241 @@
     #add-manager-btn { padding: 10px 16px; background: #3390ec; color: white; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 15px; font-weight: 600; }
 
     /* ===== МОДАЛКИ ===== */
-    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-    .modal-backdrop.visible { display: flex; }
-    .modal-content { background: white; border-radius: 12px; padding: 24px; max-width: 500px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
-    .modal-content h3 { margin-bottom: 16px; font-size: 18px; }
-    .modal-content .form-row { margin-bottom: 12px; }
-    .modal-content .form-row label { display: block; font-size: 12px; color: #707d8f; margin-bottom: 4px; font-weight: 500; }
-    .modal-content .form-row input, .modal-content .form-row select { width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; outline: none; }
-    .modal-content .form-row input:focus, .modal-content .form-row select:focus { border-color: #3390ec; }
-    .modal-content textarea { width: 100%; min-height: 120px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; resize: vertical; outline: none; }
-    .modal-content .perm-list { margin-top: 8px; padding: 12px; background: #f9fafb; border-radius: 8px; }
-    .modal-content .perm-list label { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 14px; cursor: pointer; }
-    .modal-actions { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
-    .modal-actions button { padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; border: none; }
-    .btn-cancel { background: #f0f2f5; color: #17212b; }
-    .btn-primary { background: #3390ec; color: white; }
-    .btn-danger { background: #dc3545; color: white; }
-    .btn-success { background: #28a745; color: white; }
-    .btn-primary:disabled, .btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
-    #broadcast-progress { margin-top: 12px; font-size: 13px; color: #707d8f; min-height: 18px; }
-    #client-modal .client-modal-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
-    #client-modal .client-modal-avatar { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 26px; }
-    #client-modal .readonly-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #f0f2f5; color: #707d8f; }
-    #client-modal .readonly-row span:last-child { color: #17212b; font-family: monospace; }
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+.modal-backdrop.visible { display: flex; }
 
-    /* ===== БЛОК СГЕНЕРИРОВАННОГО ПАРОЛЯ ===== */
-    .password-block {
-      background: #fff8e6;
-      border: 1px solid #ffe0a3;
-      border-radius: 8px;
-      padding: 14px;
-      margin-top: 14px;
-      display: none;
-    }
-    .password-block.visible { display: block; }
-    .password-block-title {
-      font-size: 13px;
-      color: #856404;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-    .password-value {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: white;
-      border: 1px solid #ffe0a3;
-      border-radius: 6px;
-      padding: 10px 12px;
-    }
-    .password-value code {
-      flex: 1;
-      font-size: 15px;
-      font-family: monospace;
-      color: #17212b;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      word-break: break-all;
-    }
-    .password-copy-btn {
-      background: #3390ec;
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .password-copy-btn:hover { background: #2a7fd0; }
-    .password-copy-btn.copied { background: #28a745; }
-    .password-hint {
-      font-size: 12px;
-      color: #856404;
-      margin-top: 8px;
-    }
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
 
+/* Внутренняя структура — фиксирует заголовок сверху, кнопки снизу, а тело скроллится */
+.modal-content h3 {
+  margin-bottom: 16px;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.modal-content .form-row {
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+.modal-content .form-row label {
+  display: block;
+  font-size: 12px;
+  color: #707d8f;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.modal-content .form-row input,
+.modal-content .form-row select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+.modal-content .form-row input:focus,
+.modal-content .form-row select:focus { border-color: #3390ec; }
+
+.modal-content textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.modal-content .perm-list {
+  margin-top: 8px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+.modal-content .perm-list label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  padding-top: 12px;
+  border-top: 1px solid #f0f2f5;
+}
+.modal-actions button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+}
+
+.btn-cancel { background: #f0f2f5; color: #17212b; }
+.btn-primary { background: #3390ec; color: white; }
+.btn-danger { background: #dc3545; color: white; }
+.btn-success { background: #28a745; color: white; }
+.btn-primary:disabled,
+.btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Блок с паролем */
+.password-block {
+  background: #fff8e6;
+  border: 1px solid #ffe0a3;
+  border-radius: 8px;
+  padding: 14px;
+  margin-top: 14px;
+  display: none;
+  flex-shrink: 0;
+}
+.password-block.visible { display: block; }
+.password-block-title {
+  font-size: 13px;
+  color: #856404;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.password-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid #ffe0a3;
+  border-radius: 6px;
+  padding: 10px 12px;
+  flex-wrap: wrap;
+}
+.password-value code {
+  flex: 1;
+  font-size: 15px;
+  font-family: monospace;
+  color: #17212b;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  word-break: break-all;
+  min-width: 0;
+}
+.password-copy-btn {
+  background: #3390ec;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.password-copy-btn:hover { background: #2a7fd0; }
+.password-copy-btn.copied { background: #28a745; }
+.password-hint {
+  font-size: 12px;
+  color: #856404;
+  margin-top: 8px;
+}
+
+/* Модалка клиента */
+#client-modal .client-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+#client-modal .client-modal-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+#client-modal .readonly-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 13px;
+  border-bottom: 1px solid #f0f2f5;
+  color: #707d8f;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+#client-modal .readonly-row span:last-child {
+  color: #17212b;
+  font-family: monospace;
+  word-break: break-all;
+}
+
+/* На мобильных уменьшаем отступы */
+@media (max-width: 767px) {
+  .modal-backdrop {
+    padding: 10px;
+    align-items: flex-start;
+  }
+  .modal-content {
+    padding: 18px;
+    max-height: calc(100dvh - 20px);
+    border-radius: 10px;
+  }
+  .modal-content h3 { font-size: 16px; }
+  .modal-actions {
+    flex-wrap: wrap;
+  }
+  .modal-actions button {
+    flex: 1;
+    min-width: 100px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .modal-actions #mm-delete {
+    flex-basis: 100%;
+    order: 10;
+    margin-right: 0 !important;
+  }
+}
     /* ===== SPINNER ===== */
     .spinner { width: 32px; height: 32px; border: 3px solid #e5e7eb; border-top-color: #3390ec; border-radius: 50%; animation: spin 0.8s linear infinite; }
     .spinner-small { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; vertical-align: middle; }
