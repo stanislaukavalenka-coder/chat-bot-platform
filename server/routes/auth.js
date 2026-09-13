@@ -5,8 +5,7 @@ const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
 const { getSheetData, updateSheetData } = require('../sheets');
 const { parsePermissions, serializePermissions, ROLE_PRESETS } = require('../permissions');
-const { generatePassword } = require('../utils/generate');
-const { sendPasswordReset } = require('../email');
+
 
 // ---------- POST /api/auth/login ----------
 router.post('/login', async (req, res) => {
