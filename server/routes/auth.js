@@ -138,41 +138,13 @@ router.put('/password', auth, async (req, res) => {
 });
 
 // ---------- POST /api/auth/forgot — забыл пароль ----------
+// ---------- POST /api/auth/forgot ----------
+// Email-отправка отключена. Просим обратиться к администратору.
 router.post('/forgot', async (req, res) => {
-  const { email } = req.body;
-  if (!email) {
-    return res.status(400).json({ error: 'Введите email' });
-  }
-  try {
-    const normalizedEmail = email.trim().toLowerCase();
-    const managers = await getSheetData('Managers!A:J');
-    const rowIndex = managers.findIndex(row => row[3] && row[3].toString().toLowerCase() === normalizedEmail) + 2;
-
-    // Всегда возвращаем "ok", даже если пользователя нет — защита от перебора
-    if (rowIndex >= 2) {
-      const manager = managers[rowIndex - 2];
-      const newPassword = generatePassword(10);
-      const hash = await bcrypt.hash(newPassword, 10);
-      await updateSheetData(`Managers!E${rowIndex}:E${rowIndex}`, [[hash]]);
-
-      // Отправляем письмо
-      try {
-        await sendPasswordReset({
-          email: normalizedEmail,
-          firstName: manager[1] || 'коллега',
-          password: newPassword,
-          appUrl: process.env.APP_URL || 'https://chat-bot-platform-8mge.onrender.com',
-        });
-      } catch (mailErr) {
-        console.error('Ошибка отправки письма:', mailErr);
-      }
-    }
-
-    res.json({ success: true, message: 'Если email найден — новый пароль отправлен на почту' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Ошибка сервера' });
-  }
+  res.json({
+    success: true,
+    message: 'Обратитесь к администратору на почту stanislaukavalenka@gmail.com для сброса пароля',
+  });
 });
 
 module.exports = router;
