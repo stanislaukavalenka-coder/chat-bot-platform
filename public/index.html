@@ -179,19 +179,55 @@
 
 .modal-content .perm-list {
   margin-top: 8px;
-  padding: 12px;
+  padding: 8px 12px;
   background: #f9fafb;
   border-radius: 8px;
-  max-height: 240px;
+  max-height: 260px;
   overflow-y: auto;
 }
 .modal-content .perm-list label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 0;
+  gap: 10px;
+  padding: 8px 0;
   font-size: 14px;
   cursor: pointer;
+  line-height: 1.3;
+}
+.modal-content .perm-list label span {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+}
+/* Кастомный чекбокс — одинаково выглядит на всех устройствах */
+.modal-content .perm-list input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  border: 2px solid #cbd5e0;
+  border-radius: 5px;
+  background: white;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s;
+}
+.modal-content .perm-list input[type="checkbox"]:checked {
+  background: #3390ec;
+  border-color: #3390ec;
+}
+.modal-content .perm-list input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 6px;
+  height: 11px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 .modal-actions {
