@@ -2,6 +2,7 @@ const { Bot } = require('grammy');
 const webPush = require('web-push');
 const { getSheetData, appendSheetData, updateSheetData } = require('./sheets');
 
+// Настройка VAPID
 webPush.setVapidDetails(
   'mailto:' + (process.env.VAPID_EMAIL || 'admin@example.com'),
   process.env.VAPID_PUBLIC_KEY,
@@ -10,53 +11,47 @@ webPush.setVapidDetails(
 
 const bot = new Bot(process.env.BOT_TOKEN);
 
-// ---------- PUSH ----------
-router.post('/subscribe', auth, async (req, res) => {
-  const subscription = req.body;
-  const userId = req.user.id || 'admin';
-  if (!subscription || !subscription.endpoint) {
-    return res.status(400).json({ error: 'Неверные данные подписки' });
-  }
+// ---------- ОТПРАВКА PUSH (с дедупликацией) ----------
+async function sendPushToSubscribers(title, body, url) {
   try {
     const data = await getSheetData('PushSubscriptions!A:B');
 
-    // Ищем ВСЕ строки с этим userId
-    const userRows = [];
-    data.forEach((row, idx) => {
-      if (row[1] === userId) {
-        userRows.push({ idx, subJson: row[0], endpoint: (() => {
-          try { return JSON.parse(row[0]).endpoint; } catch { return null; }
-        })() });
-      }
-    });
+    // Дедупликация по endpoint
+    const seen = new Set();
+    const subscriptions = data
+      .filter(row => row[0] && row[0].trim() !== '' && row[0].trim() !== 'subscription')
+      .map(row => {
+        try { return JSON.parse(row[0]); } catch { return null; }
+      })
+      .filter(sub => {
+        if (!sub || !sub.endpoint) return false;
+        if (seen.has(sub.endpoint)) return false;
+        seen.add(sub.endpoint);
+        return true;
+      });
 
-    // Проверяем, есть ли уже подписка с таким же endpoint
-    const sameEndpoint = userRows.find(r => r.endpoint === subscription.endpoint);
-
-    if (sameEndpoint) {
-      // Обновляем только эту строку
-      const rowNum = sameEndpoint.idx + 2;
-      await updateSheetData(`PushSubscriptions!A${rowNum}:B${rowNum}`, [
-        [JSON.stringify(subscription), userId]
-      ]);
-    } else {
-      // Удаляем все старые подписки этого userId и добавляем новую
-      for (const r of userRows) {
-        const rowNum = r.idx + 2;
-        await updateSheetData(`PushSubscriptions!A${rowNum}:B${rowNum}`, [['', '']]);
-      }
-      await appendSheetData('PushSubscriptions!A:B', [
-        [JSON.stringify(subscription), userId]
-      ]);
+    if (subscriptions.length === 0) {
+      console.log('Нет валидных подписок для отправки push');
+      return;
     }
 
-    res.json({ success: true });
+    const payload = JSON.stringify({ title, body, url: url || '/' });
+    const options = { TTL: 60 };
+
+    for (const subscription of subscriptions) {
+      try {
+        await webPush.sendNotification(subscription, payload, options);
+        console.log('Push уведомление отправлено');
+      } catch (err) {
+        console.error('Ошибка отправки push:', err.message);
+      }
+    }
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Ошибка сохранения подписки' });
+    console.error('Ошибка получения подписок для push:', err);
   }
-});
-// ---------- ОБНОВЛЕНИЕ ПОСЛЕДНЕГО СООБЩЕНИЯ ----------
+}
+
+// ---------- ОБНОВЛЕНИЕ ПОСЛЕДНЕГО СООБЩЕНИЯ В CHATS ----------
 async function updateChatLastMessage(userId, text, sender) {
   const chats = await getSheetData('Chats!A:J');
   const rowIndex = chats.findIndex(row => row[0] && row[0].toString() === userId.toString()) + 2;
@@ -81,7 +76,6 @@ bot.on('message:text', async (ctx) => {
   const chatRow = validChats.find(row => row[0].toString() === userId.toString());
 
   if (!chatRow) {
-    // Новый пользователь: B=имя, J=фамилия
     await appendSheetData('Chats!A:J', [
       [userId, firstName || username || 'Клиент', '', text, new Date().toISOString(), 'client', '', 'Telegram', username, lastName]
     ]);
@@ -141,7 +135,6 @@ bot.on('message:contact', async (ctx) => {
     const firstName = ctx.from.first_name || '';
     const lastName = ctx.from.last_name || '';
     const username = ctx.from.username || '';
-    const displayName = [firstName, lastName].filter(Boolean).join(' ') || username || 'Клиент';
     await appendSheetData('Chats!A:J', [
       [userId, firstName || username || 'Клиент', phone, 'Поделился контактом', new Date().toISOString(), 'client', '', 'Telegram', username, lastName]
     ]);
