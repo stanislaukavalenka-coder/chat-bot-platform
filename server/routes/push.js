@@ -10,11 +10,8 @@ router.get('/subscriptions', auth, async (req, res) => {
     const subs = data
       .filter(row => row[0] && row[0].trim() !== '' && row[0].trim() !== 'subscription')
       .map(row => {
-        try {
-          return { subscription: JSON.parse(row[0]), userId: row[1] };
-        } catch {
-          return null;
-        }
+        try { return { subscription: JSON.parse(row[0]), userId: row[1] }; }
+        catch { return null; }
       })
       .filter(Boolean);
     res.json(subs);
@@ -31,17 +28,37 @@ router.post('/subscribe', auth, async (req, res) => {
     return res.status(400).json({ error: 'Неверные данные подписки' });
   }
   try {
-    const existing = await getSheetData('PushSubscriptions!A:B');
-    const rowIndex = existing.findIndex(row => row[1] === userId) + 2;
-    if (rowIndex >= 2) {
-      await updateSheetData(`PushSubscriptions!A${rowIndex}:B${rowIndex}`, [
+    const data = await getSheetData('PushSubscriptions!A:B');
+
+    // Ищем все строки с этим userId
+    const userRows = [];
+    data.forEach((row, idx) => {
+      if (row[1] === userId) {
+        let endpoint = null;
+        try { endpoint = JSON.parse(row[0]).endpoint; } catch {}
+        userRows.push({ idx, endpoint });
+      }
+    });
+
+    const sameEndpoint = userRows.find(r => r.endpoint === subscription.endpoint);
+
+    if (sameEndpoint) {
+      // Обновляем существующую подписку
+      const rowNum = sameEndpoint.idx + 2;
+      await updateSheetData(`PushSubscriptions!A${rowNum}:B${rowNum}`, [
         [JSON.stringify(subscription), userId]
       ]);
     } else {
+      // Удаляем все старые подписки этого пользователя и добавляем новую
+      for (const r of userRows) {
+        const rowNum = r.idx + 2;
+        await updateSheetData(`PushSubscriptions!A${rowNum}:B${rowNum}`, [['', '']]);
+      }
       await appendSheetData('PushSubscriptions!A:B', [
         [JSON.stringify(subscription), userId]
       ]);
     }
+
     res.json({ success: true });
   } catch (err) {
     console.error(err);
